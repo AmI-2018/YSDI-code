@@ -29,17 +29,3 @@ def ChromeCurrentInstant(secondi_indietro):
     micros = int(seconds * 1e6)
     return micros
 
-def DatetimeToChromeTime(stringa):
-    """
-    :param stringa: contiene il datetime in formato stringa
-    :return:
-    """
-    dt = datetime.datetime.strptime(stringa, "%Y-%m-%d %H:%M:%S.%f")
-    seconds = time.mktime(dt.timetuple()) + (delta().days * 86400)
-    micros = int(seconds * 1e6)
-    return micros
-
-
-def StringToDatetime(stringa):
-    dt = datetime.datetime.strptime(stringa, "%Y-%m-%d %H:%M:%S.%f")
-    return dt
