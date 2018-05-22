@@ -29,3 +29,5 @@ def ChromeCurrentInstant(secondi_indietro):
     micros = int(seconds * 1e6)
     return micros
 
+def DatetimeCurrentInstant():
+    return str(datetime.datetime.now())
