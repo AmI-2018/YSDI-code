@@ -23,14 +23,18 @@ Modified version for AmI-2018 project called YSDI.
 import rest
 import time
 
-base_url = 'http://localhost:8080'
-username = 'newdeveloper'
+#base_url = 'http://localhost:8080'
+base_url = 'http://192.168.0.201'
+#username = 'newdeveloper'
+username = "fFSt4atQ1zIcis0aAudg4ULMYx9AUiB9VYyDSLfO"
 lights_url = base_url + '/api/' + username + '/lights/'
+VAL = 4
 
 
 def init():
     all_the_lights = rest.send(url=lights_url)
     for light in all_the_lights:
+        light = "1"
         url_to_call = lights_url + light + '/state'
         body = '{ "on" : false, }'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
@@ -39,6 +43,7 @@ def turnOn():
     all_the_lights = rest.send(url=lights_url)
     body = '{ "on" : true, "alert":"none", "hue":10000, "bri":254, "sat":60 }'
     for light in all_the_lights:
+        light = "1"
         url_to_call = lights_url + light + '/state'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
 
@@ -46,6 +51,7 @@ def turnOff():
     all_the_lights = rest.send(url=lights_url)
     body = '{ "on" : false, "alert":"none", "hue":10000, "bri":254, "sat":60 }'
     for light in all_the_lights:
+        light = "1"
         url_to_call = lights_url + light + '/state'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
 
@@ -58,14 +64,16 @@ def alarm():
     iniziale = {}
     body = '{ "on" : true, "alert":"select", "hue":0, "bri":254, "sat":254 }'
     for light in all_the_lights:
+        light = "1"
         diz = all_the_lights[light]
         stato = diz["state"]
         iniziale[light] = stato["on"]
         print(iniziale[light])
         url_to_call = lights_url + light + '/state'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
-    time.sleep(2)
+    time.sleep(1)
     for light in all_the_lights:
+        light = "1"
         if iniziale[light]==True:
             body = '{ "on" : true, "alert":"none", "hue":10000, "bri":254, "sat":60 }'
         else:
@@ -110,10 +118,12 @@ if __name__ == '__main__':
     #username = '1jlyVie2nvwtNwl0hv8KdZOO0okdvNcIIdPXWsdX'
     # if you are using the emulator, the username is:
     #username = 'newdeveloper'
-
+    """
     init()
     turnOn()
-    for i in range(1,10):
-        decreaseBrightness()
-        time.sleep(1)
+    alarm()
     turnOff()
+    """
+    all_the_lights = rest.send(url=lights_url)
+    for light in all_the_lights:
+        print(light)
