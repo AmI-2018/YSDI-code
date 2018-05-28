@@ -28,30 +28,30 @@ base_url = 'http://192.168.0.201'
 #username = 'newdeveloper'
 username = "fFSt4atQ1zIcis0aAudg4ULMYx9AUiB9VYyDSLfO"
 lights_url = base_url + '/api/' + username + '/lights/'
-VAL = 4
+VAL = "5"
 
 
 def init():
     all_the_lights = rest.send(url=lights_url)
     for light in all_the_lights:
-        light = "1"
+        light = VAL
         url_to_call = lights_url + light + '/state'
         body = '{ "on" : false, }'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
 
 def turnOn():
     all_the_lights = rest.send(url=lights_url)
-    body = '{ "on" : true, "alert":"none", "hue":10000, "bri":254, "sat":60 }'
+    body = '{ "on" : true, "alert":"none", "hue":10000, "bri":25, "sat":100 }'
     for light in all_the_lights:
-        light = "1"
+        light = VAL
         url_to_call = lights_url + light + '/state'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
 
 def turnOff():
     all_the_lights = rest.send(url=lights_url)
-    body = '{ "on" : false, "alert":"none", "hue":10000, "bri":254, "sat":60 }'
+    body = '{ "on" : false, "alert":"none", "hue":0, "bri":25, "sat":254 }'
     for light in all_the_lights:
-        light = "1"
+        light = VAL
         url_to_call = lights_url + light + '/state'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
 
@@ -62,50 +62,45 @@ def alarm():
     """
     all_the_lights = rest.send(url=lights_url)
     iniziale = {}
-    body = '{ "on" : true, "alert":"select", "hue":0, "bri":254, "sat":254 }'
-    for light in all_the_lights:
-        light = "1"
-        diz = all_the_lights[light]
-        stato = diz["state"]
-        iniziale[light] = stato["on"]
-        print(iniziale[light])
-        url_to_call = lights_url + light + '/state'
+    body = '{ "on" : true, "hue":0, "bri":254, "sat":254 }'
+    #for light in all_the_lights:
+    light = VAL
+    diz = all_the_lights[light]
+    stato = diz["state"]
+    iniziale[light] = stato["on"]
+    url_to_call = lights_url + light + '/state'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    time.sleep(0.5)
+
+    for i in range(1,4):
+        body = '{"bri":10}'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
-    time.sleep(1)
-    for light in all_the_lights:
-        light = "1"
-        if iniziale[light]==True:
-            body = '{ "on" : true, "alert":"none", "hue":10000, "bri":254, "sat":60 }'
-        else:
-            body = '{ "on" : false, "alert":"none", "hue":10000, "bri":254, "sat":60 }'
-        url_to_call = lights_url + light + '/state'
+        time.sleep(0.5)
+        body = '{"bri":254}'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+        time.sleep(0.5)
+
+
+    #for light in all_the_lights:
+    light = VAL
+    if iniziale[light] == True:
+        body = '{ "on" : true}'
+    else:
+        body = '{ "on" : false}'
+    url_to_call = lights_url + light + '/state'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
 
 def increaseBrightness():
-    all_the_lights = rest.send(url=lights_url)
-    for light in all_the_lights:
-        diz = all_the_lights[light]
-        stato = diz["state"]
-        lum = stato["bri"]
-        finale = lum + 10
-        if finale > 254:
-            finale = 254
-        url_to_call = lights_url + light + '/state'
-        body = '{ "bri":' + str(finale) + '}'
-        rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    light = VAL
+    url_to_call = lights_url + light + '/state'
+    body = '{ "bri":125}'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
 
 def decreaseBrightness():
-    all_the_lights = rest.send(url=lights_url)
-    for light in all_the_lights:
-        diz = all_the_lights[light]
-        stato = diz["state"]
-        lum = stato["bri"]
-        finale = lum - 10
-        if finale < 0:
-            finale = 0
-        url_to_call = lights_url + light + '/state'
-        body = '{ "bri":' + str(finale) + '}'
-        rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    light = VAL
+    url_to_call = lights_url + light + '/state'
+    body = '{ "bri":25}'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
 
 
 #il main è solo per debug
@@ -118,8 +113,6 @@ if __name__ == '__main__':
     #username = '1jlyVie2nvwtNwl0hv8KdZOO0okdvNcIIdPXWsdX'
     # if you are using the emulator, the username is:
     #username = 'newdeveloper'
-    """
-    init()
     turnOn()
     alarm()
     turnOff()
@@ -127,3 +120,4 @@ if __name__ == '__main__':
     all_the_lights = rest.send(url=lights_url)
     for light in all_the_lights:
         print(light)
+    """
