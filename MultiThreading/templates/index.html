@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YSDI</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='pageUpdate.js') }} ?1.17"></script>
+</head>
+
+<body>
+    <h1>YSDI</h1>
+    <p>
+        <br>
+        <span id="init">Taring . . .</span><br><br>
+        Current mic tare: <span id="mic-tare"></span><br>
+    N of visited sites: <span id="sites-number"></span><br>
+    N of times i heard you speaking: <span id="speak-number"></span><br><br>
+    (updates accurately every 15s)<br>
+    <button id="tare-button">Tare</button>
+    </p>
+
+</body>
+</html>
