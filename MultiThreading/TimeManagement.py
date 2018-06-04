@@ -1,4 +1,6 @@
-import datetime, time
+import datetime
+import time
+
 
 def delta():
     """
@@ -8,6 +10,7 @@ def delta():
     ora2 = datetime.datetime.strptime("01-01-1601 00:00", "%d-%m-%Y %H:%M")
     rit = ora1 - ora2
     return rit
+
 
 def ChromeTimeToDatetime(timestamp):
     """
@@ -19,6 +22,7 @@ def ChromeTimeToDatetime(timestamp):
     detected = detected - delta()
     return detected
 
+
 def ChromeCurrentInstant(secondi_indietro):
     """
     Corrente a meno del valore di secondi precedenti in cui guardare l'accaduto.
@@ -28,6 +32,7 @@ def ChromeCurrentInstant(secondi_indietro):
     seconds = time.mktime(datetime.datetime.now().timetuple()) + (delta().days * 86400) - secondi_indietro
     micros = int(seconds * 1e6)
     return micros
+
 
 def DatetimeCurrentInstant():
     return str(datetime.datetime.now())

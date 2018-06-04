@@ -65,3 +65,39 @@ def MicCount():
     tupla = cur.fetchone()
     connection.close()
     return int(tupla[0])
+
+def getSit():
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+    sql = """SELECT sitting
+             FROM chair
+             HAVING ChromeTimestamp = MAX(ChromeTimestamp);
+                        """
+    cur.execute(sql)
+    tupla = cur.fetchone()
+    connection.close()
+    return int(tupla[0])
+
+def getHist():
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+    sql = """SELECT *
+             FROM history
+             HAVING ChromeTimestamp = MAX(ChromeTimestamp);
+                        """
+    cur.execute(sql)
+    tupla = cur.fetchone()
+    connection.close()
+    return int(tupla[0])
+
+def getMic(range, now):
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+    sql = """SELECT *
+             FROM microphone
+             WHERE (?-ChromeTimestamp)<= ?;
+                        """
+    cur.execute(sql, now, range)
+    tupla = cur.fetchone()
+    connection.close()
+    return int(tupla[0])

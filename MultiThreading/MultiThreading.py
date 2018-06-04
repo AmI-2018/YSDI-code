@@ -3,10 +3,13 @@ import json
 from threading import Thread
 import microphone as mic
 import db
+import time
+import sqlite3
+import os.path
 
 app = Flask(__name__)
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]
-samplingTime = 5 #secondi, intero
+samplingTime = 5  # secondi, intero
 
 @app.route("/constants")
 def parametri():
@@ -67,6 +70,14 @@ class audioThread(Thread):
             val = mic.evaluate()
             if val == True:
                 db.MicInsert()
+
+class scoreThread(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+    def run(self):
+        while True:
+
+            time.sleep(1)
 
 if __name__ == "__main__":
     tare()

@@ -26,26 +26,26 @@ import rest
 import time
 
 # the base url
-base_url = 'http://192.168.0.202:8083'
+base_url = 'http://192.168.0.47:8083'
 
 # login credentials, to be replaced with the right ones
 # N.B. authentication may be disabled from the configuration of the 'Z-Wave Network Access' app
 # from the website available at 'base_url'
 username = 'admin'
-password = 'ami-zwave'
+password = 'YSDI2018'
 
 # some useful command classes
 switch_binary = '37'
 sensor_binary = '48'
 sensor_multi = '49'
 
-plugsDict = {'coffeeMachine':'2', 'dev1':'3'}  # TO BE TESTED IN LAB
+plugsDict = {'coffeeMachine':'2', 'dev1':'2'}  # TO BE TESTED IN LAB
 
 def turnOnPlug(type):
 
     for ex in plugsDict:
         if ex == type:
-            ourDevNumber = plugsDict['ex']
+            ourDevNumber = plugsDict[ex]
 
     # get z-wave devices
     all_devices = rest.send(url=base_url + '/ZWaveAPI/Data/0', auth=(username, password))
@@ -77,7 +77,7 @@ def turnOffPlug(type):
 
     for ex in plugsDict:
         if ex == type:
-            ourDevNumber = plugsDict['ex']
+            ourDevNumber = plugsDict[ex]
 
     # get z-wave devices
     all_devices = rest.send(url=base_url + '/ZWaveAPI/Data/0', auth=(username, password))
@@ -106,7 +106,7 @@ def turnOffPlug(type):
 
 def checkLux():
     # the base url
-    base_url = 'http://192.168.0.202:8083'
+    base_url = 'http://192.168.0.47:8083'
 
     # login credentials, to be replaced with the right ones
     # N.B. authentication may be disabled from the configuration of the 'Z-Wave Network Access' app
@@ -120,18 +120,18 @@ def checkLux():
     # all_devices = rest.send(url=base_url + '/ZWaveAPI/Data/0')
 
     # clean up all_devices
-    all_devices = all_devices['devices']
+    all_device = all_devices['devices']
     # remove the Z-Way controller from the device list
-    all_devices.pop('1')
+    all_device.pop('1')
 
     # "prototype" and base URL for getting/setting device properties
     device_url = base_url + '/ZWaveAPI/Run/devices[{}].instances[{}].commandClasses[{}]'
 
-    for device_key in all_devices:
+    for device_key in all_device:
         # iterate over device instances
-        for instance in all_devices[device_key]['instances']:
+        for instance in all_device[device_key]['instances']:
             # search for the SensorMultilevel (49) command class, e.g., for temperature
-            if sensor_multi in all_devices[device_key]['instances'][instance]['commandClasses']:
+            if sensor_multi in all_device[device_key]['instances'][instance]['commandClasses']:
                 # debug
                 print('Device %s is a sensor multilevel' % device_key)
                 # get data from the multilevel class
@@ -141,5 +141,5 @@ def checkLux():
                 # 1: temperature, 3: luminosity, 5: humidity (numbers must be used as strings)
                 val = response['data']['3']['val']['value']
                 unit_of_measure = response['data']['1']['scaleString']['value']
-                print('The temperature is ' + str(val) + unit_of_measure)
+                print('The light is ' + str(val) + unit_of_measure)
                 return val
