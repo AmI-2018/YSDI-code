@@ -36,3 +36,7 @@ def ChromeCurrentInstant(secondi_indietro):
 
 def DatetimeCurrentInstant():
     return str(datetime.datetime.now())
+
+
+def DatetimeCurrentInstantINT():
+    return datetime.datetime.now()

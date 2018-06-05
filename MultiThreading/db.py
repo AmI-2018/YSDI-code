@@ -78,14 +78,14 @@ def getSit():
     connection.close()
     return int(tupla[0])
 
-def getHist():
+def getHist(range, now):
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """SELECT *
              FROM history
-             HAVING ChromeTimestamp = MAX(ChromeTimestamp);
+             WHERE (?-ChromeTimestamp)<= ?;
                         """
-    cur.execute(sql)
+    cur.execute(sql, )
     tupla = cur.fetchone()
     connection.close()
     return int(tupla[0])
@@ -101,3 +101,26 @@ def getMic(range, now):
     tupla = cur.fetchone()
     connection.close()
     return int(tupla[0])
+
+def getScore():
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+    sql = """SELECT actualScore
+             FROM score
+             HAVING ChromeTimestamp = MAX(ChromeTimestamp);
+                        """
+    cur.execute(sql)
+    tupla = cur.fetchone()
+    connection.close()
+    return int(tupla[0])
+
+
+def setScore(new):
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+    sql = """INSERT INTO score (ChromeTimestamp, actualScore)
+             VALUES (?,?);
+                        """
+    cur.execute(sql, tm.DatetimeCurrentInstantINT(), new)
+    connection.close()
+    return

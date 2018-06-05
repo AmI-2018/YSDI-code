@@ -3,12 +3,12 @@ function hideInit(){
 }
 
 function requestUpdates(){
-    $.getJSON("http://192.168.1.66:8080/jsData/tare",function (data) {
+    $.getJSON("http://192.168.1.67:8080/jsData/tare",function (data) {
             var diz = data["values"];
             var val = diz["mic"];
             updateElements("mic-tare",val);
     });
-    $.getJSON("http://192.168.1.66:8080/jsData/visits",function (data) {
+    $.getJSON("http://192.168.1.67:8080/jsData/visits",function (data) {
             var hc = data["history-count"];
             var mc = data["mic-count"];
             updateElements("sites-number",hc);
@@ -25,7 +25,15 @@ function tare(){
     setTimeout(function(){
             $("#init").hide()
         },3000);
-    $.getJSON("http://192.168.1.66:8080/constants/tare");
+    $.getJSON("http://192.168.1.67:8080/constants/tare");
+}
+
+function score(){
+    $("#init").show();
+    setTimeout(function(){
+            $("#init").hide()
+        },3000);
+    $.getJSON("http://192.168.1.67:8080/constants/tare");
 }
 
 $(document).ready(function() {

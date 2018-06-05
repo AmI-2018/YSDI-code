@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>YSDI</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='pageUpdate.js') }} ?1.17"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='pageUpdate.js') }} ?1.18"></script>
 </head>
 
 <body>
@@ -16,8 +16,36 @@
     N of visited sites: <span id="sites-number"></span><br>
     N of times i heard you speaking: <span id="speak-number"></span><br><br>
     (updates accurately every 15s)<br>
-    <button id="tare-button">Tare</button>
     </p>
+
+    <button id="tare-button">Tare</button>
+
+    <form action={{ url_for('stop') }}>
+        <button id="stop-button">Stop studying</button>
+    </form>
+
+    <form action={{ url_for('update') }}>
+        <p>This is your score: </p>
+        <p id="score">...</p>
+        <button id="score-button" onclick="updateElements('score', {{ newScore }})">Update Score</button>
+    </form>
+
+     <button id="break-button">Take a break</button>
+    <div id="breaks">
+        <p>Which kind of break do you need?</p>
+        <ul>
+            <li><button id="break-coffee-button">Coffee</button></li>
+            <li><button id="break-nap-button">Nap or walk outside</button></li>
+            <li><button id="break-spend-button">Spend points</button>
+            <li><button id="break-study-button">Keep studying</button></li>
+        </ul>
+        <div id="distractions">
+            <p>How do you want to spend your points?</p>
+            <ul>
+            <li><button id="generic-dev-button">Device1</button></li>
+            </ul>
+        </div>
+    </div>
 
 </body>
 </html>
