@@ -6,6 +6,7 @@ import db
 import time
 import sqlite3
 import os.path
+import socket
 
 app = Flask(__name__)
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]
@@ -64,7 +65,7 @@ def testLadispe0406():
 
 @app.route("/")
 def mainPage():
-    return render_template("index.html")
+    return render_template("index.html", myIp=str(actualIp))
 
 
 @app.route("/stopStudying")
@@ -77,7 +78,13 @@ def stop():
 @app.route("/updateScore")
 def update():
     newScore = db.getScore()
-    return render_template("index.html", str(newScore))
+    return render_template("index.html", newScore=str(newScore))
+
+
+@app.route("/repeating")
+def repeating():
+    newScore = db.getScore()
+    return render_template("index.html", newScore=str(newScore))
 
 
 class scoreThread(Thread):
@@ -111,4 +118,6 @@ if __name__ == "__main__":
     score = scoreThread()
     score.start()
 
+    actualIp = socket.gethostbyname(socket.gethostname())
+    print(actualIp)
     app.run(host="0.0.0.0", port=8080)

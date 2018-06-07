@@ -1,14 +1,16 @@
+var ip = "http://";
+
 function hideInit(){
     $("#init").hide();
 }
 
 function requestUpdates(){
-    $.getJSON("http://192.168.1.67:8080/jsData/tare",function (data) {
+    $.getJSON(ip+"/jsData/tare",function (data) {
             var diz = data["values"];
             var val = diz["mic"];
             updateElements("mic-tare",val);
     });
-    $.getJSON("http://192.168.1.67:8080/jsData/visits",function (data) {
+    $.getJSON(ip+"/jsData/visits",function (data) {
             var hc = data["history-count"];
             var mc = data["mic-count"];
             updateElements("sites-number",hc);
@@ -25,7 +27,7 @@ function tare(){
     setTimeout(function(){
             $("#init").hide()
         },3000);
-    $.getJSON("http://192.168.1.67:8080/constants/tare");
+    $.getJSON(ip+"/constants/tare");
 }
 
 function score(){
@@ -33,12 +35,17 @@ function score(){
     setTimeout(function(){
             $("#init").hide()
         },3000);
-    $.getJSON("http://192.168.1.67:8080/constants/tare");
+    $.getJSON(ip+"/constants/tare");
 }
 
 $(document).ready(function() {
         var v = setTimeout(hideInit,4000);
         $("#tare-button").click(tare);
         setInterval(requestUpdates,5000);
+
+        var y = document.getElementById("ip");
+        var x = y.getAttribute("myIp");
+        ip = ip+x+':8080';
+        document.getElementById("ip").style.display = "none";
     }
 );
