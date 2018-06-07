@@ -4,7 +4,6 @@ Nel main c'è il modo in cui devono essere collegate
 """
 
 import requests, os, sqlite3
-import time
 from shutil import copyfile
 from TimeManagement import *
 import json
@@ -92,7 +91,10 @@ def sample(visits, base_url):
     for tupla in risultati:
         isVisited = checkBlacklist(blacklist, tupla[0])
         if isVisited != -1:
-            visits.append([tupla[1],tupla[0]])
+            visits.append([tupla[1], False])
+        else:
+            visits.append([tupla[1], True])
+    print(visits)
     toShip = {"pairsTimeSite" : visits}
     jSn = json.dumps(toShip)
     ritorno = requests.post(base_url + "/samples/chromeVisits", json=jSn).json()
@@ -103,7 +105,7 @@ def sample(visits, base_url):
 
 
 if __name__ == "__main__":
-    base_url = "http://192.168.1.66:8080"       #questo sarà IP della raspberry
+    base_url = "http://172.22.103.133:8080"       #questo sarà IP della raspberry
     #inizializzo
     while init(base_url)==-1:
         print("Nessuna blacklist")
