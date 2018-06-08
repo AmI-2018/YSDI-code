@@ -47,5 +47,27 @@ $(document).ready(function() {
         var x = y.getAttribute("myIp");
         ip = ip+x+':8080';
         document.getElementById("ip").style.display = "none";
+
+        $("#break-button").click(function () {
+            $(".breaks").toggleClass("active");
+        })
+        $("#score-button").click(function () {
+            $.getJSON(ip+"/functions/updateScore", function (data) {
+                val = data["newScore"];
+                updateElements("score",val);
+            })
+        })
+        $("#repeating-button").click(function () {
+            $.getJSON(ip+"/functions/repeating", function (data){
+                val = data["newScore"];
+                updateElements("score",val);
+            })
+        })
+        $("#stop-button").click(function () {
+            $.get(ip + "/functions/stopStudying", function (data) {
+                $("body").html(data);
+            })
+        })
+
     }
 );

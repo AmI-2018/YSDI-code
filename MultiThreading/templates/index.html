@@ -3,55 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <title>YSDI</title>
+
+    <link href="{{ url_for('static', filename="style.css") }}?1.0011" rel="stylesheet">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='pageUpdate.js') }} ?1.23"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='pageUpdate.js') }} ?1.28"></script>
+
 </head>
 
 <body>
-    <h1>YSDI</h1>
-    <p>
-        <br>
-        <span id="init">Taring . . .</span><br><br>
-        Current mic tare: <span id="mic-tare"></span><br>
-    N of visited sites: <span id="sites-number"></span><br>
-    N of times i heard you speaking: <span id="speak-number"></span><br><br>
-    (updates accurately every 15s)<br>
-    </p>
-
-    <p id="ip" myIp={{ myIp }}>{{ myIp }}</p> <!-- DISPLAY:NONE SET BY THE JS, IS NEEDED TO PASS THE NEW IP EACH TIME-->
-
-    <button id="tare-button">Tare</button>
-
-    <form action={{ url_for('stop') }}>
-        <button id="stop-button">Stop studying</button>
-    </form>
-
-    <form action={{ url_for('update') }}>
-        <p>This is your score: </p>
-        <p id="score">...</p>
-        <button id="score-button" onclick="updateElements('score', {{ newScore }})">Update Score</button>
-    </form>
-
-    <form action={{ url_for('repeating') }}>
-        <button id="repeating-button">Start repeating (stand up)</button>
-    </form>
-
-    <button id="break-button">Take a break</button>
-    <div id="breaks">
-        <p>Which kind of break do you need?</p>
-        <ul>
-            <li><button id="break-coffee-button">Coffee</button></li>
-            <li><button id="break-nap-button">Nap or walk outside</button></li>
-            <li><button id="break-spend-button">Spend points</button>
-            <li><button id="break-study-button">Keep studying</button></li>
-        </ul>
-        <div id="distractions">
-            <p>How do you want to spend your points?</p>
-            <ul>
-            <li><button id="generic-dev-button">Device1</button></li>
-            </ul>
-        </div>
+    <div class="title">
+        <h1 id="big-title">YSDI</h1>
     </div>
+
+    <p class="debug">
+        <br>
+        Current mic tare: <span id="mic-tare"></span><br>
+        N of visited sites: <span id="sites-number"></span><br>
+        N of times i heard you speaking: <span id="speak-number"></span><br><br>
+    </p>
+    <p class="debug" id="ip" myIp={{ myIp }}>{{ myIp }}</p> <!-- DISPLAY:NONE SET BY THE JS, IS NEEDED TO PASS THE NEW IP EACH TIME-->
+
+    {% if end==1 %}
+        <p>
+        You finished your study session.
+        </p>
+
+    {% else %}
+
+        <div class="intro">
+            <p>
+                Welcome to YSDI. Here you can interact with the system and find some useful info.<br>
+                We reccomend you tare the system before you start: press the "Tare" button<br>
+                and don't make extra noise for about 4 seconds.<br>
+                Good luck!<br><br>
+                <span id="init">Taring . . .</span><br>
+                (updates accurately every 15s)<br><br>
+            </p>
+        </div>
+
+        <div class="button-section">
+            <div class="row">
+                <button id="tare-button" class="command-button">Tare</button>
+                <button id="stop-button" class="command-button">Stop studying</button>
+                <button id="score-button" class="command-button">Update Score</button>
+            </div>
+
+            <div class="row">
+                <button id="repeating-button" class="command-button">Repeat while standing</button>
+                <button id="break-button">Take a break</button>
+            </div>
+
+            <div class="breaks">
+                <p>Which kind of break do you need?</p>
+                <ul>
+                    <li><button id="break-coffee-button">Coffee</button></li>
+                    <li><button id="break-nap-button">Nap or walk outside</button></li>
+                    <li><button id="break-spend-button">Spend points</button>
+                    <li><button id="break-study-button">Keep studying</button></li>
+                </ul>
+                <div id="distractions">
+                    <p>How do you want to spend your points?</p>
+                    <ul>
+                    <li><button id="generic-dev-button">Device1</button></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="score-section">
+            <p>Your score: </p>
+            <p id="score">...</p>
+        </div>
+    {% endif %}
 
 </body>
 </html>

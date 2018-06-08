@@ -1,0 +1,21 @@
+.title{
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+#big-title{
+    font-size: 60px;
+    color: red;
+    text-align: center;
+}
+.breaks{
+    display: none;
+}
+.button-section{
+    display: block;
+}
+.active{
+    display: block;
+}

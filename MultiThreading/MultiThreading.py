@@ -52,7 +52,8 @@ def tare():
     :return:
     """
     mic.tare()
-
+    jSn = json.dumps({"response": 200})
+    return jSn
 
 @app.route("/jsData/visits")
 def testLadispe0406():
@@ -68,23 +69,25 @@ def mainPage():
     return render_template("index.html", myIp=str(actualIp))
 
 
-@app.route("/stopStudying")
+@app.route("/functions/stopStudying")
 def stop():
     global loop
     loop = False
-    return render_template("index.html")
+    return render_template("index.html", end=1)
 
 
-@app.route("/updateScore")
+@app.route("/functions/updateScore")
 def update():
     newScore = db.getScore()
-    return render_template("index.html", newScore=str(newScore))
+    jSn = json.dumps({"newScore": newScore})
+    return jSn
 
 
-@app.route("/repeating")
+@app.route("/functions/repeating")
 def repeating():
     newScore = db.getScore()
-    return render_template("index.html", newScore=str(newScore))
+    jSn = json.dumps({"newScore": newScore})
+    return jSn
 
 
 class scoreThread(Thread):
@@ -93,7 +96,7 @@ class scoreThread(Thread):
     def run(self):
         print("start working")
         while loop:
-            print("working")
+            #print("working")
             time.sleep(1)
 
 
