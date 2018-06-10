@@ -51,6 +51,12 @@ $(document).ready(function() {
         $("#break-button").click(function () {
             $(".breaks").toggleClass("active");
         })
+        $("#break-spend-button").click(function(){
+            $(".distractions").toggleClass("active");
+        })
+        $("#break-study-button").click(function(){
+            $(".breaks").toggleClass("active");
+        })
         $("#score-button").click(function () {
             $.getJSON(ip+"/functions/updateScore", function (data) {
                 val = data["newScore"];
@@ -67,6 +73,9 @@ $(document).ready(function() {
             $.get(ip + "/functions/stopStudying", function (data) {
                 $("body").html(data);
             })
+        })
+        $("#score").click(function () {
+            $(".debug").toggleClass("active");
         })
 
     }
