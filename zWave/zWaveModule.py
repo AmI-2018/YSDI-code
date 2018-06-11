@@ -38,6 +38,7 @@ password = 'YSDI2018'
 switch_binary = '37'
 sensor_binary = '48'
 sensor_multi = '49'
+wakeup = 'WAKE_UP'
 
 plugsDict = {'coffeeMachine':'2', 'dev1':'2'}  # TO BE TESTED IN LAB
 
@@ -105,14 +106,6 @@ def turnOffPlug(type):
                     rest.send(url=url_to_call, auth=(username, password))
 
 def checkLux():
-    # the base url
-    base_url = 'http://192.168.0.47:8083'
-
-    # login credentials, to be replaced with the right ones
-    # N.B. authentication may be disabled from the configuration of the 'Z-Wave Network Access' app
-    # from the website available at 'base_url'
-    username = 'admin'
-    password = 'ami-zwave'
 
     # get z-wave devices
     all_devices = rest.send(url=base_url + '/ZWaveAPI/Data/0', auth=(username, password))
@@ -134,12 +127,18 @@ def checkLux():
             if sensor_multi in all_device[device_key]['instances'][instance]['commandClasses']:
                 # debug
                 print('Device %s is a sensor multilevel' % device_key)
+
+                # update
+                url_to_call = device_url.format(device_key, instance, sensor_multi)
+                # info from devices is in the response
+                response = rest.send(url=url_to_call, auth=(username, password))
+                time.sleep(8)
                 # get data from the multilevel class
                 url_to_call = device_url.format(device_key, instance, sensor_multi)
                 # info from devices is in the response
                 response = rest.send(url=url_to_call, auth=(username, password))
                 # 1: temperature, 3: luminosity, 5: humidity (numbers must be used as strings)
                 val = response['data']['3']['val']['value']
-                unit_of_measure = response['data']['1']['scaleString']['value']
+                unit_of_measure = response['data']['3']['scaleString']['value']
                 print('The light is ' + str(val) + unit_of_measure)
                 return val
