@@ -10,11 +10,15 @@ function requestUpdates(){
             var val = diz["mic"];
             updateElements("mic-tare",val);
     });
-    $.getJSON(ip+"/jsData/visits",function (data) {
+    $.getJSON(ip+"/jsData/report",function (data) {
             var hc = data["history-count"];
             var mc = data["mic-count"];
+            var sit = data["sit"];
+            var score = data["score"];
             updateElements("sites-number",hc);
             updateElements("speak-number",mc);
+            updateElements("chair-last-bit",sit);
+            updateElements("score",score);
     });
 }
 
@@ -57,12 +61,7 @@ $(document).ready(function() {
         $("#break-study-button").click(function(){
             $(".breaks").toggleClass("active");
         })
-        $("#score-button").click(function () {
-            $.getJSON(ip+"/functions/updateScore", function (data) {
-                val = data["newScore"];
-                updateElements("score",val);
-            })
-        })
+        $("#score-button").click(requestUpdates);
         $("#repeating-button").click(function () {
             $.getJSON(ip+"/functions/repeating", function (data){
                 val = data["newScore"];

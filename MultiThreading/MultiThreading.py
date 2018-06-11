@@ -12,6 +12,8 @@ app = Flask(__name__)
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]
 samplingTime = 5  # secondi, intero
 loop = True
+score = 0
+last_score_update = 0
 
 
 @app.route("/constants")
@@ -55,11 +57,12 @@ def tare():
     jSn = json.dumps({"response": 200})
     return jSn
 
-@app.route("/jsData/visits")
-def testLadispe0406():
+@app.route("/jsData/report")
+def report():
     hc = db.HistoryCount()
     mc = db.MicCount()
-    diz = {"history-count": str(hc), "mic-count": str(mc)}
+    last = db.getLastSit()
+    diz = {"history-count": str(hc), "mic-count": str(mc), "sit": str(last), "score": str(score)}
     jSn = json.dumps(diz)
     return jSn
 
@@ -76,17 +79,17 @@ def stop():
     return render_template("index.html", end=1)
 
 
-@app.route("/functions/updateScore")
-def update():
-    newScore = db.getScore()
-    jSn = json.dumps({"newScore": newScore})
+@app.route("/arduino", methods=["POST"])
+def sitting():
+    diz = request.json
+    db.ChairInsert(diz["value"])
+    jSn = json.dumps({"value": 200})
     return jSn
 
 
 @app.route("/functions/repeating")
 def repeating():
-    newScore = db.getScore()
-    jSn = json.dumps({"newScore": newScore})
+    jSn = json.dumps({"newScore": score})
     return jSn
 
 
@@ -94,11 +97,12 @@ class scoreThread(Thread):
     def __init__(self):
         Thread.__init__(self)
     def run(self):
+        global score
         print("start working")
         while loop:
             #print("working")
-            time.sleep(1)
-
+            time.sleep(10)
+            score = score + 1
 
 class audioThread(Thread):
     def __init__(self):
@@ -118,8 +122,8 @@ if __name__ == "__main__":
     audio = audioThread()
     audio.start()
 
-    score = scoreThread()
-    score.start()
+    scoreT = scoreThread()
+    scoreT.start()
 
     actualIp = socket.gethostbyname(socket.gethostname())
     print(actualIp)

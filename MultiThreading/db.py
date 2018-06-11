@@ -44,7 +44,20 @@ def HistoryInsert(visits):
     connection.commit()
     connection.close()
 
-#sole purpose of testing this first draft in ladispe 04/06
+def ChairInsert(sitting):
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+    sql = """INSERT INTO chair (ChromeTimestamp, sitting)
+          VALUES (?,?);
+    """
+    instant = tm.ChromeCurrentInstant(0)
+    cur.execute(sql, (instant, sitting) )
+    connection.commit()
+    connection.close()
+    return
+
+
+#The following functions before the # are for the debugging window
 def HistoryCount():
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
@@ -65,18 +78,20 @@ def MicCount():
     tupla = cur.fetchone()
     connection.close()
     return int(tupla[0])
-
-def getSit():
+def getLastSit():
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """SELECT sitting
              FROM chair
-             HAVING ChromeTimestamp = MAX(ChromeTimestamp);
+             ORDER BY ChromeTimestamp DESC;
                         """
     cur.execute(sql)
     tupla = cur.fetchone()
     connection.close()
-    return int(tupla[0])
+    if tupla is None:
+        return 0
+    return tupla[0]
+#
 
 def getHist(range, now):
     connection = sqlite3.connect(db_path)
@@ -101,26 +116,3 @@ def getMic(range, now):
     tupla = cur.fetchone()
     connection.close()
     return int(tupla[0])
-
-def getScore():
-    connection = sqlite3.connect(db_path)
-    cur = connection.cursor()
-    sql = """SELECT actualScore
-             FROM score
-             HAVING ChromeTimestamp = MAX(ChromeTimestamp);
-                        """
-    cur.execute(sql)
-    tupla = cur.fetchone()
-    connection.close()
-    return int(tupla[0])
-
-
-def setScore(new):
-    connection = sqlite3.connect(db_path)
-    cur = connection.cursor()
-    sql = """INSERT INTO score (ChromeTimestamp, actualScore)
-             VALUES (?,?);
-                        """
-    cur.execute(sql, tm.DatetimeCurrentInstantINT(), new)
-    connection.close()
-    return
