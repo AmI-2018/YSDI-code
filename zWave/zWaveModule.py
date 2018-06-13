@@ -23,10 +23,10 @@ Code reused for the AmI project 2018 YSDI
 """
 
 import rest
-import time
 
 # the base url
-base_url = 'http://192.168.0.47:8083'
+base_url = 'http://192.168.0.47:8083'    #LADISPE
+# base_url = 'http://192.168.1.84:8083'  #home
 
 # login credentials, to be replaced with the right ones
 # N.B. authentication may be disabled from the configuration of the 'Z-Wave Network Access' app
@@ -38,9 +38,8 @@ password = 'YSDI2018'
 switch_binary = '37'
 sensor_binary = '48'
 sensor_multi = '49'
-wakeup = 'WAKE_UP'
 
-plugsDict = {'coffeeMachine':'2', 'dev1':'2'}  # TO BE TESTED IN LAB
+plugsDict = {'coffeeMachine':'4', 'dev1':'4'}  # TO BE TESTED IN LAB
 
 def turnOnPlug(type):
 
@@ -125,14 +124,14 @@ def checkLux():
         for instance in all_device[device_key]['instances']:
             # search for the SensorMultilevel (49) command class, e.g., for temperature
             if sensor_multi in all_device[device_key]['instances'][instance]['commandClasses']:
+
                 # debug
                 print('Device %s is a sensor multilevel' % device_key)
 
-                # update
-                url_to_call = device_url.format(device_key, instance, sensor_multi)
-                # info from devices is in the response
-                response = rest.send(url=url_to_call, auth=(username, password))
-                time.sleep(8)
+                # force update
+                wakeup_url = base_url + '/ZAutomation/api/v1/devices/ZWayVDev_zway_3-0-49-3/command/update'
+                rest.send(url=wakeup_url, auth=(username, password))
+
                 # get data from the multilevel class
                 url_to_call = device_url.format(device_key, instance, sensor_multi)
                 # info from devices is in the response

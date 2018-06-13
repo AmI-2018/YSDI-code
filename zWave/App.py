@@ -4,20 +4,22 @@ import time
 if __name__=="__main__":
 
     print("Trying to turn on plug:")
-   # mod.turnOnPlug('coffeeMachine')
+    mod.turnOnPlug('coffeeMachine')
     print("should be on")
     print()
-   # time.sleep(1)
+    time.sleep(1)
     print("Trying to turn off plug:")
-   # mod.turnOffPlug('coffeeMachine')
+    mod.turnOffPlug('coffeeMachine')
     print("should be off")
     print()
-   # time.sleep(1)
+    time.sleep(1)
 
     print("Trying to get lux:")
-    x=mod.checkLux()
+    x = mod.checkLux()
     print("light is: "+str(x))
     print()
+
+    time.sleep(4)
 
     print("Trying to get lux:")
     x = mod.checkLux()
