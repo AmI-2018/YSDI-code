@@ -1,6 +1,5 @@
 import pyaudio
 import wave
-import threading
 
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
@@ -98,11 +97,28 @@ def tare():
 def getNoise():
     return NOISE_THRESHOLD
 
+def reproduce():
+    wf = wave.open("output.wav", 'rb')
+    p = pyaudio.PyAudio()
+    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True)
+    N = wf.getnframes()
+    data = wf.readframes(CHUNK)
+    while len(data)>0:
+        stream.write(data)
+        data = wf.readframes(CHUNK)
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+    wf.close()
+
 if __name__ == "__main__":
     print("Taring.")
     tare()
     print(NOISE_THRESHOLD)
-    for i in range(1,10):
+    for i in range(1,3):
         print("Recording . . . ")
         record(RECORD_SECONDS)
         val = evaluate()
@@ -110,3 +126,4 @@ if __name__ == "__main__":
             print("You spoke!")
         else:
             print("Nothing detected.")
+        reproduce()
