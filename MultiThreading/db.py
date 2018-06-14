@@ -21,7 +21,7 @@ def ClearAll():
     connection.close()
 
 
-def MicInsert():
+def MicInsert():  # must added the value parameter
     instant = int(tm.ChromeCurrentInstant(0) / 1e6)
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
@@ -93,26 +93,94 @@ def getLastSit():
     return tupla[0]
 #
 
+# Useful functions:
 def getHist(range, now):
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
+
+    # debug:
+    sql = """INSERT INTO history
+                VALUES (?,1)"""
+    cur.execute(sql, (now,))
+    sql = """INSERT INTO history
+                    VALUES (?,0)"""
+    cur.execute(sql, (now + 3000000,))
+    sql = """INSERT INTO history
+             VALUES (?,1)"""
+    cur.execute(sql, (now + 7000000,))
+
     sql = """SELECT *
-             FROM history
-             WHERE (?-ChromeTimestamp)<= ?;
-                        """
-    cur.execute(sql, )
-    tupla = cur.fetchone()
+                 FROM history
+                 WHERE (?-ChromeTimestamp)<= ?;
+                            """
+    cur.execute(sql, (now, range))
+    tupla = list(cur.fetchall())
     connection.close()
-    return int(tupla[0])
+    return tupla
+
+
+def getDesk(range, now):
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+
+    # debug:
+    sql = """INSERT INTO history
+                VALUES (?,0)"""
+    cur.execute(sql, (now,))
+    sql = """INSERT INTO history
+                    VALUES (?,1)"""
+    cur.execute(sql, (now + 3000000,))
+    sql = """INSERT INTO history
+             VALUES (?,1)"""
+    cur.execute(sql, (now + 7000000,))
+
+    sql = """SELECT *
+                 FROM history
+                 WHERE (?-ChromeTimestamp)<= ?;
+                            """
+    cur.execute(sql, (now, range))
+    tupla = list(cur.fetchall())
+    connection.close()
+    return tupla
 
 def getMic(range, now):
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
+
+    # debug:
+    sql = """INSERT INTO microphone
+            VALUES (?,1)"""
+    cur.execute(sql, (now,))
+    sql = """INSERT INTO microphone
+                VALUES (?,0)"""
+    cur.execute(sql, (now+1000000,))
+
     sql = """SELECT *
              FROM microphone
              WHERE (?-ChromeTimestamp)<= ?;
                         """
-    cur.execute(sql, now, range)
-    tupla = cur.fetchone()
+    cur.execute(sql, (now, range))
+    tupla = list(cur.fetchall())
     connection.close()
-    return int(tupla[0])
+    return tupla
+
+def getSit(range, now):
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+
+    # debug:
+    sql = """INSERT INTO chair
+            VALUES (?,0)"""
+    cur.execute(sql, (now,))
+    sql = """INSERT INTO chair
+                VALUES (?,1)"""
+    cur.execute(sql, (now+1000000,))
+
+    sql = """SELECT *
+             FROM chair
+             WHERE (?-ChromeTimestamp)<= ?;
+                        """
+    cur.execute(sql, (now, range))
+    tupla = list(cur.fetchall())
+    connection.close()
+    return tupla
