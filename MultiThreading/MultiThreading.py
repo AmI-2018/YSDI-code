@@ -18,11 +18,11 @@ samplingTime = 5  # secondi, intero
 loop = True
 score = 0
 last_score_update = 0
-TIME_WINDOW = 10
+TIME_WINDOW = 30
 lastChair = 0
 lastDesk = 0
 lastWeb = 0
-lastMicr = 0
+carryMicr = 0
 
 # App routes:
 @app.route("/constants")
@@ -276,50 +276,52 @@ def retrieveWeb(web):
 def retrieveMic(micr):  # TO BE REDEFINED
     now = tm.ChromeCurrentInstant(0)
     data = db.getMic(toMicroSec(TIME_WINDOW), now)
+    global carryMicr
+
     if not data:
         i = 0
+        while carryMicr > 0:
+            micr[i] = 1
+            carryMicr = carryMicr - 1
+            i = i + 1
         while i < TIME_WINDOW:
             micr[i] = 0
             i = i + 1
     else:
-        tupleNumber = 0
         previousPos = 0
+        i = 0
+
+        while carryMicr > 0:
+            micr[i] = 1
+            carryMicr = carryMicr - 1
+            previousPos = previousPos + 1
 
         for tupla in data: # scanning all tuples
             pos = int(toSec(tupla[0])-toSec(now))
-            val = int(tupla[1])
 
-            if pos > 0 and tupleNumber == 0:  # if 1st time I insert I do not have to do it in head, fill up to pos
-                i = 0
-                global lastMicr
-                while i<pos and i<TIME_WINDOW:
-                    micr[i]=lastMicr
-                    i=i+1
-                # print('putting in pos: '+str(pos)+' value: '+str(val))
-                micr[pos] = val
-                previousPos = pos
-                previousVal= val
-            elif pos>(previousPos+1):  # if not 1st time I insert I do not have to do it next to prev, fill up to pos
+            if pos > (previousPos+1):  # if not 1st time I insert I do not have to do it next to prev, fill up to pos
                 i = previousPos+1
                 while i < pos and i<TIME_WINDOW:
-                    micr[i] = previousVal
+                    micr[i] = 0
                     i = i + 1
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
-                micr[pos] = val
                 previousPos = pos
-                previousVal = val
+                carryMicr = mic.RECORD_SECONDS
+                while previousPos<pos+mic.RECORD_SECONDS and previousPos < TIME_WINDOW:
+                    micr[previousPos] = 1
+                    previousPos = previousPos + 1
+                    carryMicr = carryMicr -1
             else:
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
-                micr[pos] = val
-                previousPos = pos
-                previousVal = val
-
-            tupleNumber = tupleNumber + 1
+                carryMicr = mic.RECORD_SECONDS
+                previousPos = previousPos + 1
+                while previousPos < pos + mic.RECORD_SECONDS and previousPos < TIME_WINDOW:
+                    micr[previousPos] = 1
+                    previousPos = previousPos + 1
+                    carryMicr = carryMicr - 1
 
         if previousPos<TIME_WINDOW:  # completing if uncomplete
             i=previousPos
             while i<TIME_WINDOW:
-                micr[i]=previousVal
+                micr[i]=0
                 i=i+1
 
     print('Mic data have been retrieved')
@@ -371,15 +373,14 @@ def setLast(chair, desk, web, micr):
     global lastChair
     global lastDesk
     global lastWeb
-    global lastMicr
 
     lastChair = chair[TIME_WINDOW-1]
     lastDesk = desk[TIME_WINDOW - 1]
     lastWeb = web[TIME_WINDOW - 1]
-    lastMicr = micr[TIME_WINDOW - 1]
+    # microphone carry is already set in retrieveMic(...)
 
     print('[C]->[' + str(lastChair) + '] , '+'[D]->[' + str(lastDesk) + '] , '+'[W]->[' + str(lastWeb) + '] , '
-          + '[M]->[' + str(lastMicr) + ']')
+          + '[M]->[' + str(carryMicr) + ']')
     print('All ending data have been stored')
     print('----------------------------')
 
