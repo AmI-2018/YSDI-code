@@ -1,6 +1,7 @@
 import time, sqlite3
 import TimeManagement as tm
 import os.path
+import microphone as mic
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "YSDIdb")
@@ -23,7 +24,7 @@ def ClearAll():
 
 
 def MicInsert():  # must added the value parameter
-    instant = int(tm.ChromeCurrentInstant(0) / 1e6)
+    instant = int(tm.ChromeCurrentInstant(0)) - mic.RECORD_SECONDS*1000000
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """INSERT INTO microphone
@@ -38,11 +39,14 @@ def HistoryInsert(visits):
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """INSERT INTO history
-              VALUES (?)
+              VALUES (?,?)
             """
     for coppia in visits:
-        instant = int(int(coppia[0])/1e6)
-        cur.execute(sql, (instant,) )
+        instant = int(int(coppia[0]))
+        if coppia[1]:
+            cur.execute(sql, (instant, 1))
+        else:
+            cur.execute(sql, (instant, 0))
     connection.commit()
     connection.close()
 

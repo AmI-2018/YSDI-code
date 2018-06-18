@@ -13,8 +13,8 @@ import hueLightsModule as hlm
 app = Flask(__name__)
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]  # not permitted websites
 samplingTime = 5         # seconds
-LUX_THRESHOLD_LOW = 250  # threshold in Lux to regulate light
-LUX_THRESHOLD_HIGH = 800 # threshold in Lux to regulate light
+LUX_THRESHOLD_LOW = 200  # threshold in Lux to regulate light
+LUX_THRESHOLD_HIGH = 400 # threshold in Lux to regulate light
 loop = True              # True --> system is on
 standing = False         # True --> user is repeating the studied topic while standing
 pause = False            # True --> user is taking a break
@@ -120,7 +120,7 @@ def retrieve(chair, desk, web, mic):      # function receiving lists where data 
 def retrieveChair(chair):                # function receiving list for chair data and filling it taking them from the DB
     global lastChair
     now = tm.ChromeCurrentInstant(0)
-    data = db.getSit(toMicroSec(TIME_WINDOW), now)
+    data = db.getSit(toMicroSec(TIME_WINDOW-1), now)
     if not data:   # if empty list (no values retrieved in last 30 sec fro the sensor)
         i = 0
         while i < TIME_WINDOW:
@@ -172,7 +172,7 @@ def retrieveChair(chair):                # function receiving list for chair dat
 def retrieveDesk(desk):                 # DOCUMENTATION FOR THIS FUNCTION IS THE SAME OF retrieveChair(...)
     global lastDesk
     now = tm.ChromeCurrentInstant(0)
-    data = db.getDesk(toMicroSec(TIME_WINDOW), now)
+    data = db.getDesk(toMicroSec(TIME_WINDOW-1), now)
     if not data:
         i = 0
         while i < TIME_WINDOW:
@@ -225,7 +225,7 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
     global carryWeb                         # the only addition is the carry, there could be remaining "studying" sec
                                             # from previous loop
     now = tm.ChromeCurrentInstant(0)
-    data = db.getHist(toMicroSec(TIME_WINDOW), now)
+    data = db.getHist(toMicroSec(TIME_WINDOW-1), now)
     if not data:
         i = 0
         while i < TIME_WINDOW and carryWeb > 0:
@@ -307,7 +307,7 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
 def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS THE SAME OF retrieveWeb(...)
     global carryMicr
     now = tm.ChromeCurrentInstant(0)
-    data = db.getMic(toMicroSec(TIME_WINDOW), now)
+    data = db.getMic(toMicroSec(TIME_WINDOW-1), now)
 
     if not data:
         i = 0
@@ -324,7 +324,6 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
 
         for tupla in data:  # scanning all tuples
             pos = int(toSec(now) - toSec(tupla[0]))
-            val = int(tupla[1])
 
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert I do not have to do it in head, fill up to pos
                 i = 0
@@ -335,10 +334,7 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
                     else:
                         micr[i] = 0
                     i = i + 1
-                if val == 1:
-                    carryMicr = mic.RECORD_SECONDS
-                else:
-                    carryMicr = 0
+                carryMicr = mic.RECORD_SECONDS
                 micr[pos] = carryMicr
                 if carryMicr > 0:
                     carryMicr = carryMicr - 1
@@ -353,20 +349,14 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
                     else:
                         micr[i] = 0
                     i = i + 1
-                if val == 1:
-                    carryMicr = mic.RECORD_SECONDS
-                else:
-                    carryMicr = 0
+                carryMicr = mic.RECORD_SECONDS
                 micr[pos] = carryMicr
                 if carryMicr > 0:
                     carryMicr = carryMicr - 1
                 previousPos = pos
 
             else:                         # completing if incomplete (maybe last val was not in the last cell)
-                if val == 1:
-                    carryMicr = mic.RECORD_SECONDS
-                else:
-                    carryMicr = 0
+                carryMicr = mic.RECORD_SECONDS
                 micr[pos] = carryMicr
                 if carryMicr > 0:
                     carryMicr = carryMicr - 1
@@ -487,7 +477,7 @@ class scoreThread(Thread):
 
         # set up environment
         db.ClearAll()
-        db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
+        # db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
         hlm.init()
 
         time.sleep(7)
