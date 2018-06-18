@@ -58,13 +58,26 @@ def ChairInsert(sitting):
           VALUES (?,?);
     """
     instant = tm.ChromeCurrentInstant(0)
-    cur.execute(sql, (instant, sitting) )
+    cur.execute(sql, (instant, sitting))
     connection.commit()
     connection.close()
     return
 
 
-#The following functions before the # are for the debugging window
+def DeskInsert(moving):
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+    sql = """INSERT INTO desk (ChromeTimestamp, moving)
+          VALUES (?,?);
+    """
+    instant = tm.ChromeCurrentInstant(0)
+    cur.execute(sql, (instant, moving))
+    connection.commit()
+    connection.close()
+    return
+
+
+# The following functions before the # are for the debugging window
 def HistoryCount():
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
