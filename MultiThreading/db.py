@@ -5,6 +5,7 @@ import os.path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "YSDIdb")
 
+
 def ClearAll():
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
@@ -32,6 +33,7 @@ def MicInsert():  # must added the value parameter
     connection.commit()
     connection.close()
 
+
 def HistoryInsert(visits):
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
@@ -43,6 +45,7 @@ def HistoryInsert(visits):
         cur.execute(sql, (instant,) )
     connection.commit()
     connection.close()
+
 
 def ChairInsert(sitting):
     connection = sqlite3.connect(db_path)
@@ -93,94 +96,105 @@ def getLastSit():
     return tupla[0]
 #
 
+
 # Useful functions:
-def getHist(range, now):
+def getHist(Trange, now):
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
-
-    # debug:
-    sql = """INSERT INTO history
-                VALUES (?,1)"""
-    cur.execute(sql, (now,))
-    sql = """INSERT INTO history
-                    VALUES (?,0)"""
-    cur.execute(sql, (now + 3000000,))
-    sql = """INSERT INTO history
-             VALUES (?,1)"""
-    cur.execute(sql, (now + 7000000,))
 
     sql = """SELECT *
                  FROM history
                  WHERE (?-ChromeTimestamp)<= ?;
                             """
-    cur.execute(sql, (now, range))
+    cur.execute(sql, (now, Trange))
     tupla = list(cur.fetchall())
     connection.close()
     return tupla
 
 
-def getDesk(range, now):
+def getDesk(Trange, now):
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
-
-    # debug:
-    sql = """INSERT INTO history
-                VALUES (?,0)"""
-    cur.execute(sql, (now,))
-    sql = """INSERT INTO history
-                    VALUES (?,1)"""
-    cur.execute(sql, (now + 3000000,))
-    sql = """INSERT INTO history
-             VALUES (?,1)"""
-    cur.execute(sql, (now + 7000000,))
 
     sql = """SELECT *
-                 FROM history
+                 FROM desk
                  WHERE (?-ChromeTimestamp)<= ?;
                             """
-    cur.execute(sql, (now, range))
+    cur.execute(sql, (now, Trange))
     tupla = list(cur.fetchall())
     connection.close()
     return tupla
 
-def getMic(range, now):
+
+def getMic(Trange, now):
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
-
-    # debug:
-    sql = """INSERT INTO microphone
-            VALUES (?,1)"""
-    cur.execute(sql, (now,))
-    sql = """INSERT INTO microphone
-                VALUES (?,0)"""
-    cur.execute(sql, (now+1000000,))
 
     sql = """SELECT *
              FROM microphone
              WHERE (?-ChromeTimestamp)<= ?;
                         """
-    cur.execute(sql, (now, range))
+    cur.execute(sql, (now, Trange))
     tupla = list(cur.fetchall())
     connection.close()
     return tupla
 
-def getSit(range, now):
+
+def getSit(Trange, now):
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
-
-    # debug:
-    sql = """INSERT INTO chair
-            VALUES (?,0)"""
-    cur.execute(sql, (now,))
-    sql = """INSERT INTO chair
-                VALUES (?,1)"""
-    cur.execute(sql, (now+1000000,))
 
     sql = """SELECT *
              FROM chair
              WHERE (?-ChromeTimestamp)<= ?;
                         """
-    cur.execute(sql, (now, range))
+    cur.execute(sql, (now, Trange))
     tupla = list(cur.fetchall())
     connection.close()
     return tupla
+
+
+def init(now):  # just for testing
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+
+    # chair:
+    sql = """INSERT INTO chair
+                VALUES (?,0)"""
+    cur.execute(sql, (now,))
+    sql = """INSERT INTO chair
+                    VALUES (?,1)"""
+    cur.execute(sql, (now + 1000000,))
+
+    # mic:
+    sql = """INSERT INTO microphone
+                VALUES (?)"""
+    cur.execute(sql, (now,))
+    sql = """INSERT INTO microphone
+                    VALUES (?)"""
+    cur.execute(sql, (now + 1000000,))
+
+    # desk:
+    sql = """INSERT INTO desk
+                    VALUES (?,0)"""
+    cur.execute(sql, (now,))
+    sql = """INSERT INTO desk
+                        VALUES (?,1)"""
+    cur.execute(sql, (now + 3000000,))
+    sql = """INSERT INTO desk
+                 VALUES (?,1)"""
+    cur.execute(sql, (now + 5000000,))
+
+    # hist:
+    sql = """INSERT INTO history
+                    VALUES (?,1)"""
+    cur.execute(sql, (now,))
+    sql = """INSERT INTO history
+                        VALUES (?,0)"""
+    cur.execute(sql, (now + 3000000,))
+    sql = """INSERT INTO history
+                 VALUES (?,1)"""
+    cur.execute(sql, (now + 5000000,))
+
+    connection.commit()
+    connection.close()

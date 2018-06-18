@@ -4,8 +4,6 @@ from threading import Thread
 import microphone as mic
 import db
 import time
-import sqlite3
-import os.path
 import socket
 import TimeManagement as tm
 import zWaveModule as zwm
@@ -15,9 +13,14 @@ import hueLightsModule as hlm
 app = Flask(__name__)
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]  # not permitted websites
 samplingTime = 5         # seconds
+LUX_THRESHOLD_LOW = 250  # threshold in Lux to regulate light
+LUX_THRESHOLD_HIGH = 800 # threshold in Lux to regulate light
 loop = True              # True --> system is on
 standing = False         # True --> user is repeating the studied topic while standing
-score = 0
+pause = False            # True --> user is taking a break
+# define the buffer for keeping track of distractions
+# define var for keeping track of alarm necessity
+score = 0                # global user score
 WEB_TIMEOUT = 10         # duration in seconds of an estimated time needed to read useful info from a web page
 TIME_WINDOW = 30         # duration in seconds of the time range analyzed by the program at each loop
 lastChair = 0            # variable keeping track of the last value for that sensor at the end of the previous loop
@@ -392,16 +395,17 @@ def toMicroSec(sec):     # switching from seconds to microseconds
     return sec*1000000
 
 
-def analise(chair, desk, web, micr, result):  # this function combines data from all the sensors and generates result
+def analyze(chair, desk, web, micr, result):  # this function combines data from all the sensors and generates result
+    # must take into account also standing and pause (and the buffer/var for the distractions/alarm)
     i = 0
     while i < TIME_WINDOW:
         if chair[i] == 0:
-            result[i] = 0;
+            result[i] = 0
         else:
             if micr[i] == 1 and web[i] != 0:
                 result[i] = 1
             if desk[i] == 1:
-                result[i] == 1
+                result[i] = 1
             if web[i] == 1:
                 result[i] = 1
         i = i+1
@@ -440,7 +444,27 @@ def setLast(chair, desk, web, micr): # this function takes last values from the 
 
 
 def updateLight():                  # at each loop cycle the luminosity is checked and, if necessary, light is regulated
-    print('5')
+    light = zwm.checkLux()
+    initialState = hlm.STATE       # just for observing from console
+
+    if lastChair == 0:             # if they're no more sitting, desk light can be switched off (let's avoid wastes)
+        if hlm.ON:
+            hlm.turnOff()
+    else:
+        if light < LUX_THRESHOLD_LOW: # if light is too low turn on the bulb or, if it's already on, increase brightness
+            if hlm.ON:
+                hlm.increaseBrightness()
+            else:
+                hlm.turnOn()
+        elif light > LUX_THRESHOLD_HIGH: # if light too high decrease brightness if it's high or turn off bulb otherwise
+            if hlm.ON and hlm.STATE == 1:
+                hlm.decreaseBrightness()
+            elif hlm.ON and hlm.STATE == 0:
+                hlm.turnOff()
+
+    print("["+str(initialState)+"] -> ["+str(hlm.STATE)+"]")
+    print('Lights have been regulated')
+    print('----------------------------')
 
 
 # Threads:
@@ -461,7 +485,12 @@ class scoreThread(Thread):
         micr = []
         result = []
 
+        # set up environment
         db.ClearAll()
+        db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
+        hlm.init()
+
+        time.sleep(7)
 
         i = 0
 
@@ -479,7 +508,7 @@ class scoreThread(Thread):
 
             retrieve(chair, desk, web, micr)
 
-            analise(chair, desk, web, micr, result)
+            analyze(chair, desk, web, micr, result)
 
             update(result)
 
