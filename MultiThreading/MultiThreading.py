@@ -8,6 +8,7 @@ import socket
 import TimeManagement as tm
 import zWaveModule as zwm
 import hueLightsModule as hlm
+import serial
 
 # Global vars
 app = Flask(__name__)
@@ -520,6 +521,25 @@ class audioThread(Thread):          # this thread will manage the microphone
             val = mic.evaluate()
             if val == True:
                 db.MicInsert()
+
+
+
+class writingThread(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+    def run(self):
+        ser = serial.Serial(port='COM1', baudrate=9600, timeout=10)  # specify serial port and bauderate
+        print(ser.name)  # check which port is really used
+        while True:
+            line = str(ser.read(3))
+            # print(line)
+            i = line.find("0")
+            if i < 0:
+                i = line.find("1")
+            if i >= 0:
+                num = int(line[i:i + 1])
+                db.DeskInsert(num)
+            time.sleep(1)  # sleep 1 seconds
 
 
 if __name__ == "__main__":          # this thread will host the web interface
