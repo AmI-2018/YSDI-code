@@ -63,7 +63,7 @@ def getTares():
 @app.route("/constants/tare")
 def tare():
     """
-    Questa dovrà fare la tara di tutti gli strumenti, su richiesta!
+    Questa dovra fare la tara di tutti gli strumenti, su richiesta!
     Per cominciare fa solo quella del microfono
     :return:
     """
@@ -528,7 +528,8 @@ class writingThread(Thread):
     def __init__(self):
         Thread.__init__(self)
     def run(self):
-        ser = serial.Serial(port='COM1', baudrate=9600, timeout=10)  # specify serial port and bauderate
+        print("TROLL")
+        ser = serial.Serial(port='COM3', baudrate=9600, timeout=10)  # specify serial port and bauderate
         print(ser.name)  # check which port is really used
         while True:
             line = str(ser.read(3))
@@ -550,6 +551,9 @@ if __name__ == "__main__":          # this thread will host the web interface
 
     scoreT = scoreThread()
     scoreT.start()
+
+    writeT = writingThread()
+    writeT.start()
 
     actualIp = socket.gethostbyname(socket.gethostname())
     print(actualIp)

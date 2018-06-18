@@ -131,7 +131,7 @@ def decreaseBrightness():
     STATE = 0
 
 
-#il main è solo per debug, must be REMOVED before exam demo
+#il main e solo per debug, must be REMOVED before exam demo
 if __name__ == '__main__':
     # the base URL
     #base_url = 'http://192.168.0.201'

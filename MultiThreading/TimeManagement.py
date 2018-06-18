@@ -15,8 +15,8 @@ def delta():
 def ChromeTimeToDatetime(timestamp):
     """
     Converte il timestamp della history in un dato di tipo datetime
-    :param timestamp: prende il timestamp nel formato di chrome, cioè che parte dal 01-01-1601 alle 00:00 in microsecondi
-    :return: dato in formato datetime, cioè che parte dal 01-01-1970 alle 00:00
+    :param timestamp: prende il timestamp nel formato di chrome, cioe che parte dal 01-01-1601 alle 00:00 in microsecondi
+    :return: dato in formato datetime, cioe che parte dal 01-01-1970 alle 00:00
     """
     detected = datetime.datetime.fromtimestamp(timestamp / 1e6)
     detected = detected - delta()
