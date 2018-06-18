@@ -13,16 +13,17 @@ import hueLightsModule as hlm
 
 # Global vars
 app = Flask(__name__)
-blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]
-samplingTime = 5  # secondi, intero
-loop = True
+blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]  # not permitted websites
+samplingTime = 5         # seconds
+loop = True              # True --> system is on
+standing = False         # True --> user is repeating the studied topic while standing
 score = 0
-last_score_update = 0
-TIME_WINDOW = 30
-lastChair = 0
-lastDesk = 0
-lastWeb = 0
-carryMicr = 0
+WEB_TIMEOUT = 10         # duration in seconds of an estimated time needed to read useful info from a web page
+TIME_WINDOW = 30         # duration in seconds of the time range analyzed by the program at each loop
+lastChair = 0            # variable keeping track of the last value for that sensor at the end of the previous loop
+lastDesk = 0             #  //
+carryWeb = 0             # variable keeping track of the remaining seconds counted as "studying" (i.e. 1) from last data
+carryMicr = 0            #  //
 
 # App routes:
 @app.route("/constants")
@@ -103,128 +104,131 @@ def repeating():
 
 
 # Functions:
-def retrieve(chair, desk, web, mic):
+def retrieve(chair, desk, web, mic):      # function receiving lists where data are going to be stored in
     print('----------------------------')
     retrieveChair(chair)
     retrieveDesk(desk)
     retrieveWeb(web)
     retrieveMic(mic)
-    print('All data have been retrieved')
+    print('All data has been retrieved')
     print('----------------------------')
 
 
-def retrieveChair(chair):
+def retrieveChair(chair):                # function receiving list for chair data and filling it taking them from the DB
+    global lastChair
     now = tm.ChromeCurrentInstant(0)
     data = db.getSit(toMicroSec(TIME_WINDOW), now)
-    if not data:
+    if not data:   # if empty list (no values retrieved in last 30 sec fro the sensor)
         i = 0
         while i < TIME_WINDOW:
-            chair[i] = 0
+            chair[i] = lastChair   # then assign value of previous loop (if they were sitting, nothing changed)
             i = i + 1
     else:
         tupleNumber = 0
         previousPos = 0
+        previousVal = 0
 
         for tupla in data:  # scanning all tuples
-            pos = int(toSec(tupla[0]) - toSec(now))
+            pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
 
-            if pos > 0 and tupleNumber == 0:  # if 1st time I insert I do not have to do it in head, fill up to pos
+            if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
-                global lastChair
                 while i < pos and i < TIME_WINDOW:
                     chair[i] = lastChair
                     i = i + 1
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
                 chair[pos] = val
                 previousPos = pos
                 previousVal = val
-            elif pos > (previousPos + 1):  # if not 1st time I insert I do not have to do it next to prev, fill up to pos
+            elif pos > (previousPos + 1): # if not 1st time I insert I do not have to do it next to prev, fill up to pos
                 i = previousPos + 1
                 while i < pos and i < TIME_WINDOW:
                     chair[i] = previousVal
                     i = i + 1
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
                 chair[pos] = val
                 previousPos = pos
                 previousVal = val
-            else:
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
+            else:                        # else we have to put it in first pos OR in the one next to the prev (no fill)
                 chair[pos] = val
                 previousPos = pos
                 previousVal = val
 
             tupleNumber = tupleNumber + 1
 
-        if previousPos < TIME_WINDOW:  # completing if uncomplete
+        if previousPos < TIME_WINDOW:    # completing if incomplete (maybe last val was not in the last cell)
             i = previousPos
             while i < TIME_WINDOW:
                 chair[i] = previousVal
                 i = i + 1
 
-    print('Chair data have been retrieved')
+    print('Chair data has been retrieved')
     print(chair)
     print()
 
-def retrieveDesk(desk):
+
+def retrieveDesk(desk):                 # DOCUMENTATION FOR THIS FUNCTION IS THE SAME OF retrieveChair(...)
+    global lastDesk
     now = tm.ChromeCurrentInstant(0)
     data = db.getDesk(toMicroSec(TIME_WINDOW), now)
     if not data:
         i = 0
         while i < TIME_WINDOW:
-            desk[i] = 0
+            desk[i] = lastDesk
             i = i + 1
     else:
         tupleNumber = 0
         previousPos = 0
+        previousVal = 0
 
         for tupla in data:  # scanning all tuples
-            pos = int(toSec(tupla[0]) - toSec(now))
+            pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
 
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert I do not have to do it in head, fill up to pos
                 i = 0
-                global lastDesk
                 while i < pos and i < TIME_WINDOW:
                     desk[i] = lastDesk
                     i = i + 1
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
                 desk[pos] = val
                 previousPos = pos
                 previousVal = val
-            elif pos > (previousPos + 1):  # if not 1st time I insert I do not have to do it next to prev, fill up to pos
+            elif pos > (previousPos + 1): # if not 1st time I insert I do not have to do it next to prev, fill up to pos
                 i = previousPos + 1
                 while i < pos and i < TIME_WINDOW:
                     desk[i] = previousVal
                     i = i + 1
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
                 desk[pos] = val
                 previousPos = pos
                 previousVal = val
-            else:
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
+            else:                         # completing if incomplete (maybe last val was not in the last cell)
                 desk[pos] = val
                 previousPos = pos
                 previousVal = val
 
             tupleNumber = tupleNumber + 1
 
-        if previousPos < TIME_WINDOW:  # completing if uncomplete
+        if previousPos < TIME_WINDOW:     # completing if incomplete
             i = previousPos
             while i < TIME_WINDOW:
                 desk[i] = previousVal
                 i = i + 1
 
-    print('Desk data have been retrieved')
+    print('Desk data has been retrieved')
     print(desk)
     print()
 
 
-def retrieveWeb(web):
+def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS THE SAME OF retrieveChair(...)
+    global carryWeb                         # the only addition is the carry, there could be remaining "studying" sec
+                                            # from previous loop
     now = tm.ChromeCurrentInstant(0)
     data = db.getHist(toMicroSec(TIME_WINDOW), now)
     if not data:
         i = 0
+        while i < TIME_WINDOW and carryWeb > 0:
+            web[i] = carryWeb
+            i = i + 1
+            carryWeb = carryWeb - 1
         while i < TIME_WINDOW:
             web[i] = 0
             i = i + 1
@@ -233,111 +237,162 @@ def retrieveWeb(web):
         previousPos = 0
 
         for tupla in data:  # scanning all tuples
-            pos = int(toSec(tupla[0]) - toSec(now))
+            pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
 
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert I do not have to do it in head, fill up to pos
                 i = 0
-                global lastWeb
                 while i < pos and i < TIME_WINDOW:
-                    web[i] = lastWeb
+                    if carryWeb > 0:
+                        web[i] = carryWeb
+                        carryWeb = carryWeb - 1
+                    else:
+                        web[i] = 0
                     i = i + 1
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
-                web[pos] = val
+                if val == 1:
+                    carryWeb = WEB_TIMEOUT
+                else:
+                    carryWeb = 0
+                web[pos] = carryWeb
+                if carryWeb > 0:
+                    carryWeb = carryWeb - 1
                 previousPos = pos
-                previousVal = val
-            elif pos > (previousPos + 1):  # if not 1st time I insert I do not have to do it next to prev, fill up to pos
+
+            elif pos > (previousPos + 1): # if not 1st time I insert I do not have to do it next to prev, fill up to pos
                 i = previousPos + 1
                 while i < pos and i < TIME_WINDOW:
-                    web[i] = previousVal
+                    if carryWeb > 0:
+                        web[i] = carryWeb
+                        carryWeb = carryWeb - 1
+                    else:
+                        web[i] = 0
                     i = i + 1
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
-                web[pos] = val
+                if val == 1:
+                    carryWeb = WEB_TIMEOUT
+                else:
+                    carryWeb = 0
+                web[pos] = carryWeb
+                if carryWeb > 0:
+                    carryWeb = carryWeb - 1
                 previousPos = pos
-                previousVal = val
-            else:
-                # print('putting in pos: ' + str(pos) + ' value: ' + str(val))
-                web[pos] = val
+
+            else:                         # completing if incomplete (maybe last val was not in the last cell)
+                if val == 1:
+                    carryWeb = WEB_TIMEOUT
+                else:
+                    carryWeb = 0
+                web[pos] = carryWeb
+                if carryWeb > 0:
+                    carryWeb = carryWeb - 1
                 previousPos = pos
-                previousVal = val
 
             tupleNumber = tupleNumber + 1
 
-        if previousPos < TIME_WINDOW:  # completing if uncomplete
+        if previousPos < TIME_WINDOW:     # completing if incomplete
             i = previousPos
             while i < TIME_WINDOW:
-                web[i] = previousVal
+                web[i] = carryWeb
+                if carryWeb > 0:
+                    carryWeb = carryWeb - 1
                 i = i + 1
 
-    print('Web data have been retrieved')
+    print('Web data has been retrieved')
     print(web)
     print()
 
-def retrieveMic(micr):  # TO BE REDEFINED
+
+def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS THE SAME OF retrieveWeb(...)
+    global carryMicr
     now = tm.ChromeCurrentInstant(0)
     data = db.getMic(toMicroSec(TIME_WINDOW), now)
-    global carryMicr
 
     if not data:
         i = 0
-        while carryMicr > 0:
-            micr[i] = 1
-            carryMicr = carryMicr - 1
+        while i < TIME_WINDOW and carryMicr > 0:
+            micr[i] = carryMicr
             i = i + 1
+            carryMicr = carryMicr - 1
         while i < TIME_WINDOW:
             micr[i] = 0
             i = i + 1
     else:
+        tupleNumber = 0
         previousPos = 0
-        i = 0
 
-        while carryMicr > 0:
-            micr[i] = 1
-            carryMicr = carryMicr - 1
-            previousPos = previousPos + 1
+        for tupla in data:  # scanning all tuples
+            pos = int(toSec(now) - toSec(tupla[0]))
+            val = int(tupla[1])
 
-        for tupla in data: # scanning all tuples
-            pos = int(toSec(tupla[0])-toSec(now))
-
-            if pos > (previousPos+1):  # if not 1st time I insert I do not have to do it next to prev, fill up to pos
-                i = previousPos+1
-                while i < pos and i<TIME_WINDOW:
-                    micr[i] = 0
+            if pos > 0 and tupleNumber == 0:  # if 1st time I insert I do not have to do it in head, fill up to pos
+                i = 0
+                while i < pos and i < TIME_WINDOW:
+                    if carryMicr > 0:
+                        micr[i] = carryMicr
+                        carryMicr = carryMicr - 1
+                    else:
+                        micr[i] = 0
                     i = i + 1
-                previousPos = pos
-                carryMicr = mic.RECORD_SECONDS
-                while previousPos<pos+mic.RECORD_SECONDS and previousPos < TIME_WINDOW:
-                    micr[previousPos] = 1
-                    previousPos = previousPos + 1
-                    carryMicr = carryMicr -1
-            else:
-                carryMicr = mic.RECORD_SECONDS
-                previousPos = previousPos + 1
-                while previousPos < pos + mic.RECORD_SECONDS and previousPos < TIME_WINDOW:
-                    micr[previousPos] = 1
-                    previousPos = previousPos + 1
+                if val == 1:
+                    carryMicr = mic.RECORD_SECONDS
+                else:
+                    carryMicr = 0
+                micr[pos] = carryMicr
+                if carryMicr > 0:
                     carryMicr = carryMicr - 1
+                previousPos = pos
 
-        if previousPos<TIME_WINDOW:  # completing if uncomplete
-            i=previousPos
-            while i<TIME_WINDOW:
-                micr[i]=0
-                i=i+1
+            elif pos > (previousPos + 1): # if not 1st time I insert I do not have to do it next to prev, fill up to pos
+                i = previousPos + 1
+                while i < pos and i < TIME_WINDOW:
+                    if carryMicr > 0:
+                        micr[i] = carryMicr
+                        carryMicr = carryMicr - 1
+                    else:
+                        micr[i] = 0
+                    i = i + 1
+                if val == 1:
+                    carryMicr = mic.RECORD_SECONDS
+                else:
+                    carryMicr = 0
+                micr[pos] = carryMicr
+                if carryMicr > 0:
+                    carryMicr = carryMicr - 1
+                previousPos = pos
 
-    print('Mic data have been retrieved')
+            else:                         # completing if incomplete (maybe last val was not in the last cell)
+                if val == 1:
+                    carryMicr = mic.RECORD_SECONDS
+                else:
+                    carryMicr = 0
+                micr[pos] = carryMicr
+                if carryMicr > 0:
+                    carryMicr = carryMicr - 1
+                previousPos = pos
+
+            tupleNumber = tupleNumber + 1
+
+        if previousPos < TIME_WINDOW:     # completing if incomplete
+            i = previousPos
+            while i < TIME_WINDOW:
+                micr[i] = carryMicr
+                if carryMicr > 0:
+                    carryMicr = carryMicr - 1
+                i = i + 1
+
+    print('Mic data has been retrieved')
     print(micr)
     print()
 
 
-def toSec(micro):
+def toSec(micro):        # switching from microseconds to seconds
     return micro/1000000
 
 
-def toMicroSec(sec):
+def toMicroSec(sec):     # switching from seconds to microseconds
     return sec*1000000
 
 
-def analise(chair, desk, web, micr, result):
+def analise(chair, desk, web, micr, result):  # this function combines data from all the sensors and generates result
     i = 0
     while i < TIME_WINDOW:
         if chair[i] == 0:
@@ -351,15 +406,15 @@ def analise(chair, desk, web, micr, result):
                 result[i] = 1
         i = i+1
     print(result)
-    print('Data have been processed')
+    print('Data has been processed')
     print('----------------------------')
 
 
-def update(result):
+def update(result):                          # this function analyzes result and, if it's the case, updates the score
     tot = 0
-    for i in result:
+    for i in result:  # counts how many seconds have been evaluated as "studying"
         tot = tot + i
-    if tot >= TIME_WINDOW/2:
+    if tot >= TIME_WINDOW/2:  # if at least half of the seconds of the time window were ok, then increment score
         global score
         score = score + 1
         print('['+str(score-1)+']->['+str(score)+']')
@@ -369,23 +424,22 @@ def update(result):
     print('----------------------------')
 
 
-def setLast(chair, desk, web, micr):
+def setLast(chair, desk, web, micr): # this function takes last values from the data lists and stores them for next loop
     global lastChair
     global lastDesk
-    global lastWeb
 
     lastChair = chair[TIME_WINDOW-1]
     lastDesk = desk[TIME_WINDOW - 1]
-    lastWeb = web[TIME_WINDOW - 1]
+    # web carry is already set in retrieveWeb(...)
     # microphone carry is already set in retrieveMic(...)
 
-    print('[C]->[' + str(lastChair) + '] , '+'[D]->[' + str(lastDesk) + '] , '+'[W]->[' + str(lastWeb) + '] , '
+    print('[C]->[' + str(lastChair) + '] , '+'[D]->[' + str(lastDesk) + '] , '+'[W]->[' + str(carryWeb) + '] , '
           + '[M]->[' + str(carryMicr) + ']')
-    print('All ending data have been stored')
+    print('All termination data has been stored')
     print('----------------------------')
 
 
-def updateLight():
+def updateLight():                  # at each loop cycle the luminosity is checked and, if necessary, light is regulated
     print('5')
 
 
@@ -393,10 +447,14 @@ def updateLight():
 class scoreThread(Thread):
     def __init__(self):
         Thread.__init__(self)
-    def run(self):
+
+    def run(self):                  # this thread will handle data, evaluate the score and check/set lights
         global score
         global TIME_WINDOW
 
+        # sensors data will be stored in lists (1 per sensor) with TIME_WINDOW elements each one representing 1 second
+        # with value 0 if in the second the user didn't study (according to our measurements)
+        # with value 1 if instead they did study
         chair = []
         desk = []
         web = []
@@ -405,7 +463,7 @@ class scoreThread(Thread):
 
         db.ClearAll()
 
-        i=0
+        i = 0
 
         # lists initialization
         while i < TIME_WINDOW:
@@ -431,9 +489,11 @@ class scoreThread(Thread):
 
             time.sleep(TIME_WINDOW)
 
-class audioThread(Thread):
+
+class audioThread(Thread):          # this thread will manage the microphone
     def __init__(self):
         Thread.__init__(self)
+
     def run(self):
         db.ClearAll()
         while True:
@@ -443,7 +503,7 @@ class audioThread(Thread):
                 db.MicInsert()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":          # this thread will host the web interface
     tare()
     print("Fine tara")
     audio = audioThread()
