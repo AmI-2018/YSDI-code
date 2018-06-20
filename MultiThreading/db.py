@@ -23,8 +23,8 @@ def ClearAll():
     connection.close()
 
 
-def MicInsert():  # must added the value parameter
-    instant = int(tm.ChromeCurrentInstant(0)) - mic.RECORD_SECONDS*1000000
+def MicInsert(instant):  # must added the value parameter
+    #instant = int(tm.ChromeCurrentInstant(0)) - mic.RECORD_SECONDS*1000000
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """INSERT INTO microphone
@@ -42,7 +42,7 @@ def HistoryInsert(visits):
               VALUES (?,?)
             """
     for coppia in visits:
-        instant = int(int(coppia[0]))
+        instant = coppia[0]
         if coppia[1]:
             cur.execute(sql, (instant, 1))
         else:

@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template
 import json
 from threading import Thread
-import microphone as mic
+#import microphone as mic
 import db
 import time
 import socket
@@ -12,6 +12,8 @@ import serial
 
 # Global vars
 app = Flask(__name__)
+micReTare = True
+micThreshold = 500     # this holds the mic parameters, since we can no longer call functions on a locally running thread
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]  # not permitted websites
 samplingTime = 5         # seconds
 LUX_THRESHOLD_LOW = 200  # threshold in Lux to regulate light
@@ -28,6 +30,7 @@ lastChair = 0            # variable keeping track of the last value for that sen
 lastDesk = 0             #  //
 carryWeb = 0             # variable keeping track of the remaining seconds counted as "studying" (i.e. 1) from last data
 carryMicr = 0            #  //
+
 
 # App routes:
 @app.route("/constants")
@@ -52,10 +55,28 @@ def handleSamples():
     jSn = json.dumps(mappa)
     return jSn
 
+@app.route("/samples/microphone", methods=["POST"])
+def handleMicrophone():
+    """
+    Riceve un json con chiave "startingInstant" e value l'istante  di inizio reg.
+    :return: il json di arrivo.
+    """
+    global micThreshold, micReTare
+    mappa = json.loads(request.json)
+    instant = mappa["startingInstant"]
+    micThreshold = mappa["currentThreshold"]
+    speaking = mappa["speaking"]
+    if speaking:
+        db.MicInsert(instant)
+    print(micThreshold)
+    ret = {"reTare": micReTare}
+    if micReTare:
+        micReTare = False
+    return json.dumps(ret)
 
 @app.route("/jsData/tare")
 def getTares():
-    diz = {"values": {"mic": str(mic.getNoise())}}
+    diz = {"values": {"mic": micThreshold}}
     jSn = json.dumps(diz)
     return jSn
 
@@ -67,7 +88,8 @@ def tare():
     Per cominciare fa solo quella del microfono
     :return:
     """
-    mic.tare()
+    global micReTare
+    micReTare = True
     jSn = json.dumps({"response": 200})
     return jSn
 
@@ -479,7 +501,7 @@ class scoreThread(Thread):
         # set up environment
         db.ClearAll()
         # db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
-        hlm.init()
+        #hlm.init()
 
         time.sleep(7)
 
@@ -505,23 +527,9 @@ class scoreThread(Thread):
 
             setLast(chair, desk, web, micr)
 
-            updateLight()
+            #updateLight()
 
             time.sleep(TIME_WINDOW)
-
-
-class audioThread(Thread):          # this thread will manage the microphone
-    def __init__(self):
-        Thread.__init__(self)
-
-    def run(self):
-        db.ClearAll()
-        while True:
-            mic.record(mic.RECORD_SECONDS)
-            val = mic.evaluate()
-            if val == True:
-                db.MicInsert()
-
 
 
 class writingThread(Thread):
@@ -529,6 +537,7 @@ class writingThread(Thread):
         Thread.__init__(self)
     def run(self):
         print("TROLL")
+        #the actual port on rasp is: /dev/ttyACM0
         ser = serial.Serial(port='COM3', baudrate=9600, timeout=10)  # specify serial port and bauderate
         print(ser.name)  # check which port is really used
         while True:
@@ -543,17 +552,15 @@ class writingThread(Thread):
             time.sleep(1)  # sleep 1 seconds
 
 
-if __name__ == "__main__":          # this thread will host the web interface
-    tare()
-    print("Fine tara")
-    audio = audioThread()
-    audio.start()
+if __name__ == "__main__": # this thread will host the web interface
+    db.ClearAll()
+
 
     scoreT = scoreThread()
-    scoreT.start()
+    #scoreT.start()
 
     writeT = writingThread()
-    writeT.start()
+    #writeT.start()
 
     actualIp = socket.gethostbyname(socket.gethostname())
     print(actualIp)
