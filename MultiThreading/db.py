@@ -1,7 +1,6 @@
 import time, sqlite3
 import TimeManagement as tm
 import os.path
-import microphone as mic
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "YSDIdb")
@@ -24,7 +23,7 @@ def ClearAll():
 
 
 def MicInsert(instant):  # must added the value parameter
-    #instant = int(tm.ChromeCurrentInstant(0)) - mic.RECORD_SECONDS*1000000
+    #instant = int(tm.ChromeCurrentInstant(0)) - mic.RECORD_SECONDS*1000000 #attualmente l'istante di inizio è già preso dal pc e ce lo manda
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """INSERT INTO microphone

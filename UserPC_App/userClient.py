@@ -119,7 +119,7 @@ class audioThread(Thread):          # this thread will manage the microphone
             mic.record(mic.RECORD_SECONDS)
             val = mic.evaluate()
             print(val)
-            mappa = {"startingInstant": instant, "currentThreshold": mic.NOISE_THRESHOLD, "speaking": val}
+            mappa = {"startingInstant": instant, "currentThreshold": mic.NOISE_THRESHOLD, "len": mic.RECORD_SECONDS, "speaking": val}
             jSn = json.dumps(mappa)
             ret = requests.post(base_url + "/samples/microphone", json=jSn)
             mappa = ret.json()

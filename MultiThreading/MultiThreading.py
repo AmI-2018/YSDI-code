@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template
 import json
 from threading import Thread
-#import microphone as mic
 import db
 import time
 import socket
@@ -12,8 +11,9 @@ import serial
 
 # Global vars
 app = Flask(__name__)
-micReTare = True
+micReTare = False
 micThreshold = 500     # this holds the mic parameters, since we can no longer call functions on a locally running thread
+micRECORD_SECONDS = 5;
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]  # not permitted websites
 samplingTime = 5         # seconds
 LUX_THRESHOLD_LOW = 200  # threshold in Lux to regulate light
@@ -61,10 +61,11 @@ def handleMicrophone():
     Riceve un json con chiave "startingInstant" e value l'istante  di inizio reg.
     :return: il json di arrivo.
     """
-    global micThreshold, micReTare
+    global micThreshold, micReTare, micRECORD_SECONDS
     mappa = json.loads(request.json)
     instant = mappa["startingInstant"]
     micThreshold = mappa["currentThreshold"]
+    micRECORD_SECONDS = mappa["len"]
     speaking = mappa["speaking"]
     if speaking:
         db.MicInsert(instant)
@@ -357,7 +358,7 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
                     else:
                         micr[i] = 0
                     i = i + 1
-                carryMicr = mic.RECORD_SECONDS
+                carryMicr = micRECORD_SECONDS
                 micr[pos] = carryMicr
                 if carryMicr > 0:
                     carryMicr = carryMicr - 1
@@ -372,14 +373,14 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
                     else:
                         micr[i] = 0
                     i = i + 1
-                carryMicr = mic.RECORD_SECONDS
+                carryMicr = micRECORD_SECONDS
                 micr[pos] = carryMicr
                 if carryMicr > 0:
                     carryMicr = carryMicr - 1
                 previousPos = pos
 
             else:                         # completing if incomplete (maybe last val was not in the last cell)
-                carryMicr = mic.RECORD_SECONDS
+                carryMicr = micRECORD_SECONDS
                 micr[pos] = carryMicr
                 if carryMicr > 0:
                     carryMicr = carryMicr - 1
