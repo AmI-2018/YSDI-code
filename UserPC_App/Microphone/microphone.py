@@ -8,9 +8,10 @@ RATE = 44100
 RECORD_SECONDS = 5
 RECORD_TARE = 3
 WAVE_OUTPUT_FILENAME = "output.wav"
+TARE_OUTPUT_FILENAME = "tare.wav"
 NOISE_THRESHOLD = 500
 
-def record(record_len):
+def __record__(record_len, output):
     p = pyaudio.PyAudio()
     stream = p.open(format=FORMAT,
                     channels=CHANNELS,
@@ -24,7 +25,7 @@ def record(record_len):
     stream.stop_stream()
     stream.close()
     p.terminate()
-    wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+    wf = wave.open(output, 'wb')
     wf.setnchannels(CHANNELS)
     wf.setsampwidth(p.get_sample_size(FORMAT))
     wf.setframerate(RATE)
@@ -32,6 +33,8 @@ def record(record_len):
     wf.close()
     return
 
+def record(record_len):
+    __record__(record_len,WAVE_OUTPUT_FILENAME)
 
 def evaluate():
     wf = wave.open("output.wav", 'rb')
@@ -69,8 +72,8 @@ def evaluate():
 
 def tare():
     global NOISE_THRESHOLD
-    record(RECORD_TARE)
-    wf = wave.open("output.wav", 'rb')
+    __record__(RECORD_TARE, TARE_OUTPUT_FILENAME)
+    wf = wave.open(TARE_OUTPUT_FILENAME, 'rb')
     p = pyaudio.PyAudio()
     stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                     channels=wf.getnchannels(),
@@ -91,12 +94,31 @@ def tare():
     p.terminate()
     wf.close()
 
+def getNoise():
+    return NOISE_THRESHOLD
+
+def reproduce():
+    wf = wave.open("output.wav", 'rb')
+    p = pyaudio.PyAudio()
+    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True)
+    N = wf.getnframes()
+    data = wf.readframes(CHUNK)
+    while len(data)>0:
+        stream.write(data)
+        data = wf.readframes(CHUNK)
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+    wf.close()
 
 if __name__ == "__main__":
     print("Taring.")
     tare()
     print(NOISE_THRESHOLD)
-    for i in range(1,10):
+    for i in range(1,3):
         print("Recording . . . ")
         record(RECORD_SECONDS)
         val = evaluate()
@@ -104,3 +126,4 @@ if __name__ == "__main__":
             print("You spoke!")
         else:
             print("Nothing detected.")
+        reproduce()

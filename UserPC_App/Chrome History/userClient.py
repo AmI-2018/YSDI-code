@@ -7,6 +7,8 @@ import requests, os, sqlite3
 from shutil import copyfile
 from TimeManagement import *
 import json
+from threading import Thread
+import microphone as mic
 
 blacklist = []
 history = ""
@@ -94,18 +96,42 @@ def sample(visits, base_url):
             visits.append([tupla[1], False])
         else:
             visits.append([tupla[1], True])
-    print(visits)
+    #print(visits)
     toShip = {"pairsTimeSite" : visits}
     jSn = json.dumps(toShip)
-    ritorno = requests.post(base_url + "/samples/chromeVisits", json=jSn).json()
+    resp = requests.post(base_url + "/samples/chromeVisits", json=jSn)
+    #print(resp)
+    ritorno = resp.json()
     if int(ritorno["length"])!=len(visits):
         return -2
     last_check = ChromeCurrentInstant(0) + 1
     return 0
 
 
+class audioThread(Thread):          # this thread will manage the microphone
+    def __init__(self):
+        Thread.__init__(self)
+        mic.tare()
+    def run(self):
+        while True:
+            #print(mic.NOISE_THRESHOLD)
+            instant = ChromeCurrentInstant(0)
+            mic.record(mic.RECORD_SECONDS)
+            val = mic.evaluate()
+            print(val)
+            mappa = {"startingInstant": instant, "currentThreshold": mic.NOISE_THRESHOLD, "speaking": val}
+            jSn = json.dumps(mappa)
+            ret = requests.post(base_url + "/samples/microphone", json=jSn)
+            mappa = ret.json()
+            if mappa["reTare"]:
+                mic.tare()
+            # mic.reproduce()
+
+
 if __name__ == "__main__":
-    base_url = "http://172.22.103.133:8080"       #questo sarà IP della raspberry
+    audio = audioThread()
+    audio.start()
+    base_url = "http://192.168.1.66:8080"       #questo sarà IP della raspberry
     #inizializzo
     while init(base_url)==-1:
         print("Nessuna blacklist")

@@ -1,4 +1,6 @@
-import datetime, time
+import datetime
+import time
+
 
 def delta():
     """
@@ -9,15 +11,17 @@ def delta():
     rit = ora1 - ora2
     return rit
 
+
 def ChromeTimeToDatetime(timestamp):
     """
     Converte il timestamp della history in un dato di tipo datetime
-    :param timestamp: prende il timestamp nel formato di chrome, cioè che parte dal 01-01-1601 alle 00:00 in microsecondi
-    :return: dato in formato datetime, cioè che parte dal 01-01-1970 alle 00:00
+    :param timestamp: prende il timestamp nel formato di chrome, cioe che parte dal 01-01-1601 alle 00:00 in microsecondi
+    :return: dato in formato datetime, cioe che parte dal 01-01-1970 alle 00:00
     """
     detected = datetime.datetime.fromtimestamp(timestamp / 1e6)
     detected = detected - delta()
     return detected
+
 
 def ChromeCurrentInstant(secondi_indietro):
     """
@@ -29,5 +33,10 @@ def ChromeCurrentInstant(secondi_indietro):
     micros = int(seconds * 1e6)
     return micros
 
+
 def DatetimeCurrentInstant():
     return str(datetime.datetime.now())
+
+
+def DatetimeCurrentInstantINT():
+    return datetime.datetime.now()
