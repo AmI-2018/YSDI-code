@@ -131,7 +131,7 @@ class audioThread(Thread):          # this thread will manage the microphone
 if __name__ == "__main__":
     audio = audioThread()
     audio.start()
-    base_url = "http://192.168.1.66:8080"       #questo sarà IP della raspberry
+    base_url = "http://192.168.1.84:8080"       #questo sarà IP della raspberry
     #inizializzo
     while init(base_url)==-1:
         print("Nessuna blacklist")

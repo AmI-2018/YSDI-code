@@ -8,7 +8,7 @@ int tmp=0; // auxiliary temporary variable
 float threshold = 0.10; // refernce threshold needed to evaluate our data
 
 /// IPAddress of the Raspberry server(192,168,0,21); ///
-IPAddress rasp_server(192,168,0,21); // specify destination server IP of Raspberry
+IPAddress rasp_server(192,168,1,84); // specify destination server IP of Raspberry
 
 YunClient client;
 
@@ -24,7 +24,7 @@ void send_to_rasp(int); // function to generate HTTP request to raspberry server
 void setup() {
   // put your setup code here, to run once:
   Bridge.begin();
-  Serial.begin(9660); // Baud-rate --> D = 9,66 Ksymbols/s
+  Serial.begin(9600); // Baud-rate --> D = 9,66 Ksymbols/s
 
 }
 
@@ -75,12 +75,12 @@ void send_to_rasp(int value)
   JsonData = JsonData + value;
   JsonData = JsonData + "}";
   Serial.println(threshold);
-  client.connect("192.168.0.21", 8080);
+  client.connect("192.168.1.84", 8080);
   if(client.connected()) // open socket on port 8080
   { 
         Serial.println("Connected");  // serial print --> debugging purpose      
         client.println("POST /arduino HTTP/1.1"); // maybe specify resource
-        client.println("Host:192.168.0.21"); // SPECIFY HOST!!!!
+        client.println("Host:192.168.1.84"); // SPECIFY HOST!!!!
         client.print("Content-Length: ");
         client.println(JsonData.length());
         client.println("User-Agent: Arduino/1.0");

@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template
 import json
 from threading import Thread
+from microphone import warning
 import db
 import time
 import socket
@@ -539,7 +540,7 @@ class writingThread(Thread):
     def run(self):
         print("TROLL")
         #the actual port on rasp is: /dev/ttyACM0
-        ser = serial.Serial(port='COM3', baudrate=9600, timeout=10)  # specify serial port and bauderate
+        ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=10)  # specify serial port and bauderate
         print(ser.name)  # check which port is really used
         while True:
             line = str(ser.read(3))
@@ -555,7 +556,7 @@ class writingThread(Thread):
 
 if __name__ == "__main__": # this thread will host the web interface
     db.ClearAll()
-
+    warning()
 
     scoreT = scoreThread()
     #scoreT.start()

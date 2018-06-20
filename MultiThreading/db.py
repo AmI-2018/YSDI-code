@@ -3,8 +3,9 @@ import TimeManagement as tm
 import os.path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, "YSDIdb")
-
+#db_path = os.path.join(BASE_DIR, "YSDIdb")
+#test per rasp
+db_path = "/home/pi/Desktop/Multithreading/YSDIdb"
 
 def ClearAll():
     connection = sqlite3.connect(db_path)
