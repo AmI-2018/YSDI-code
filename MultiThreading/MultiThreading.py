@@ -13,8 +13,8 @@ import serial
 # Global vars
 app = Flask(__name__)
 micReTare = False
-micThreshold = 500     # this holds the mic parameters, since we can no longer call functions on a locally running thread
-micRECORD_SECONDS = 5;
+micThreshold = 500    # this holds the mic parameters, since we can no longer call functions on a locally running thread
+micRECORD_SECONDS = 5
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]  # not permitted websites
 samplingTime = 5         # seconds
 LUX_THRESHOLD_LOW = 200  # threshold in Lux to regulate light
@@ -159,7 +159,7 @@ def retrieveChair(chair):                # function receiving list for chair dat
         for tupla in data:  # scanning all tuples
             pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
-
+            pos = TIME_WINDOW - pos
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
@@ -183,8 +183,8 @@ def retrieveChair(chair):                # function receiving list for chair dat
 
             tupleNumber = tupleNumber + 1
 
-        if previousPos < TIME_WINDOW:    # completing if incomplete (maybe last val was not in the last cell)
-            i = previousPos
+        if previousPos < TIME_WINDOW-1:    # completing if incomplete (maybe last val was not in the last cell)
+            i = previousPos+1
             while i < TIME_WINDOW:
                 chair[i] = previousVal
                 i = i + 1
@@ -211,8 +211,8 @@ def retrieveDesk(desk):                 # DOCUMENTATION FOR THIS FUNCTION IS THE
         for tupla in data:  # scanning all tuples
             pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
-
-            if pos > 0 and tupleNumber == 0:  # if 1st time I insert I do not have to do it in head, fill up to pos
+            pos = TIME_WINDOW - pos
+            if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
                     desk[i] = lastDesk
@@ -220,7 +220,7 @@ def retrieveDesk(desk):                 # DOCUMENTATION FOR THIS FUNCTION IS THE
                 desk[pos] = val
                 previousPos = pos
                 previousVal = val
-            elif pos > (previousPos + 1): # if not 1st time I insert I do not have to do it next to prev, fill up to pos
+            elif pos > (previousPos + 1):  # if not 1st insert and I do not have to do it next to prev, fill up to pos
                 i = previousPos + 1
                 while i < pos and i < TIME_WINDOW:
                     desk[i] = previousVal
@@ -235,8 +235,8 @@ def retrieveDesk(desk):                 # DOCUMENTATION FOR THIS FUNCTION IS THE
 
             tupleNumber = tupleNumber + 1
 
-        if previousPos < TIME_WINDOW:     # completing if incomplete
-            i = previousPos
+        if previousPos < TIME_WINDOW-1:     # completing if incomplete
+            i = previousPos+1
             while i < TIME_WINDOW:
                 desk[i] = previousVal
                 i = i + 1
@@ -267,8 +267,8 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
         for tupla in data:  # scanning all tuples
             pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
-
-            if pos > 0 and tupleNumber == 0:  # if 1st time I insert I do not have to do it in head, fill up to pos
+            pos = TIME_WINDOW - pos
+            if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
                     if carryWeb > 0:
@@ -286,7 +286,7 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
                     carryWeb = carryWeb - 1
                 previousPos = pos
 
-            elif pos > (previousPos + 1): # if not 1st time I insert I do not have to do it next to prev, fill up to pos
+            elif pos > (previousPos + 1):  # if not 1st insert and I do not have to do it next to prev, fill up to pos
                 i = previousPos + 1
                 while i < pos and i < TIME_WINDOW:
                     if carryWeb > 0:
@@ -316,8 +316,8 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
 
             tupleNumber = tupleNumber + 1
 
-        if previousPos < TIME_WINDOW:     # completing if incomplete
-            i = previousPos
+        if previousPos < TIME_WINDOW-1:     # completing if incomplete
+            i = previousPos+1
             while i < TIME_WINDOW:
                 web[i] = carryWeb
                 if carryWeb > 0:
@@ -349,8 +349,8 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
 
         for tupla in data:  # scanning all tuples
             pos = int(toSec(now) - toSec(tupla[0]))
-
-            if pos > 0 and tupleNumber == 0:  # if 1st time I insert I do not have to do it in head, fill up to pos
+            pos = TIME_WINDOW - pos
+            if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
                     if carryMicr > 0:
@@ -365,7 +365,7 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
                     carryMicr = carryMicr - 1
                 previousPos = pos
 
-            elif pos > (previousPos + 1): # if not 1st time I insert I do not have to do it next to prev, fill up to pos
+            elif pos > (previousPos + 1):  # if not 1st insert and I do not have to do it next to prev, fill up to pos
                 i = previousPos + 1
                 while i < pos and i < TIME_WINDOW:
                     if carryMicr > 0:
@@ -389,8 +389,8 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
 
             tupleNumber = tupleNumber + 1
 
-        if previousPos < TIME_WINDOW:     # completing if incomplete
-            i = previousPos
+        if previousPos < TIME_WINDOW-1:     # completing if incomplete
+            i = previousPos+1
             while i < TIME_WINDOW:
                 micr[i] = carryMicr
                 if carryMicr > 0:
@@ -403,7 +403,7 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
 
 
 def toSec(micro):        # switching from microseconds to seconds
-    return micro/1000000
+    return micro//1000000   # integer division is necessary to avoid index out of bound exception with the position
 
 
 def toMicroSec(sec):     # switching from seconds to microseconds
@@ -502,10 +502,10 @@ class scoreThread(Thread):
 
         # set up environment
         db.ClearAll()
-        # db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
+        db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
         #hlm.init()
 
-        time.sleep(7)
+        time.sleep(30)  # JUST FOR TESTING PURPOSES
 
         i = 0
 
@@ -538,7 +538,7 @@ class writingThread(Thread):
     def __init__(self):
         Thread.__init__(self)
     def run(self):
-        print("TROLL")
+
         #the actual port on rasp is: /dev/ttyACM0
         ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=10)  # specify serial port and bauderate
         print(ser.name)  # check which port is really used
@@ -556,10 +556,10 @@ class writingThread(Thread):
 
 if __name__ == "__main__": # this thread will host the web interface
     db.ClearAll()
-    warning()
+    # warning()
 
     scoreT = scoreThread()
-    #scoreT.start()
+    scoreT.start()
 
     writeT = writingThread()
     #writeT.start()

@@ -3,9 +3,9 @@ import TimeManagement as tm
 import os.path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-#db_path = os.path.join(BASE_DIR, "YSDIdb")
-#test per rasp
-db_path = "/home/pi/Desktop/Multithreading/YSDIdb"
+db_path = os.path.join(BASE_DIR, "YSDIdb")
+# test per rasp
+# db_path = "/home/pi/Desktop/Multithreading/YSDIdb"
 
 def ClearAll():
     connection = sqlite3.connect(db_path)
@@ -121,7 +121,7 @@ def getHist(Trange, now):
 
     sql = """SELECT *
                  FROM history
-                 WHERE (?-ChromeTimestamp)<= ?;
+                 WHERE (?-ChromeTimestamp)< ?;
                             """
     cur.execute(sql, (now, Trange))
     tupla = list(cur.fetchall())
@@ -135,7 +135,7 @@ def getDesk(Trange, now):
 
     sql = """SELECT *
                  FROM desk
-                 WHERE (?-ChromeTimestamp)<= ?;
+                 WHERE (?-ChromeTimestamp)< ?;
                             """
     cur.execute(sql, (now, Trange))
     tupla = list(cur.fetchall())
@@ -149,7 +149,7 @@ def getMic(Trange, now):
 
     sql = """SELECT *
              FROM microphone
-             WHERE (?-ChromeTimestamp)<= ?;
+             WHERE (?-ChromeTimestamp)< ?;
                         """
     cur.execute(sql, (now, Trange))
     tupla = list(cur.fetchall())
@@ -163,7 +163,7 @@ def getSit(Trange, now):
 
     sql = """SELECT *
              FROM chair
-             WHERE (?-ChromeTimestamp)<= ?;
+             WHERE (?-ChromeTimestamp)< ?;
                         """
     cur.execute(sql, (now, Trange))
     tupla = list(cur.fetchall())
@@ -182,16 +182,14 @@ def init(now):  # just for testing
     sql = """INSERT INTO chair
                     VALUES (?,1)"""
     cur.execute(sql, (now + 1000000,))
+    sql = """INSERT INTO chair
+                    VALUES (?,0)"""
+    cur.execute(sql, (now+5000000,))
+    sql = """INSERT INTO chair
+                        VALUES (?,1)"""
+    cur.execute(sql, (now + 10000000,))
 
-    # mic:
-    sql = """INSERT INTO microphone
-                VALUES (?)"""
-    cur.execute(sql, (now,))
-    sql = """INSERT INTO microphone
-                    VALUES (?)"""
-    cur.execute(sql, (now + 1000000,))
-
-    # desk:
+        # desk:
     sql = """INSERT INTO desk
                     VALUES (?,0)"""
     cur.execute(sql, (now,))
@@ -199,19 +197,36 @@ def init(now):  # just for testing
                         VALUES (?,1)"""
     cur.execute(sql, (now + 3000000,))
     sql = """INSERT INTO desk
-                 VALUES (?,1)"""
+                 VALUES (?,0)"""
     cur.execute(sql, (now + 5000000,))
 
     # hist:
     sql = """INSERT INTO history
                     VALUES (?,1)"""
-    cur.execute(sql, (now,))
+    cur.execute(sql, (now+1000000,))
     sql = """INSERT INTO history
                         VALUES (?,0)"""
     cur.execute(sql, (now + 3000000,))
     sql = """INSERT INTO history
                  VALUES (?,1)"""
     cur.execute(sql, (now + 5000000,))
+
+    # mic:
+    sql = """INSERT INTO microphone
+                    VALUES (?)"""
+    cur.execute(sql, (now,))
+    sql = """INSERT INTO microphone
+                            VALUES (?)"""
+    cur.execute(sql, (now + 1000000,))
+    sql = """INSERT INTO microphone
+                                VALUES (?)"""
+    cur.execute(sql, (now + 2000000,))
+    sql = """INSERT INTO microphone
+                        VALUES (?)"""
+    cur.execute(sql, (now + 27000000,))
+    sql = """INSERT INTO microphone
+                            VALUES (?)"""
+    cur.execute(sql, (now + 29999999,))
 
     connection.commit()
     connection.close()
