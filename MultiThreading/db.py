@@ -181,7 +181,7 @@ def init(now):  # just for testing
     cur.execute(sql, (now,))
     sql = """INSERT INTO chair
                     VALUES (?,1)"""
-    cur.execute(sql, (now + 1000000,))
+    cur.execute(sql, (now + 1100000,))
     sql = """INSERT INTO chair
                     VALUES (?,0)"""
     cur.execute(sql, (now+5000000,))
@@ -203,7 +203,7 @@ def init(now):  # just for testing
     # hist:
     sql = """INSERT INTO history
                     VALUES (?,1)"""
-    cur.execute(sql, (now+1000000,))
+    cur.execute(sql, (now+1100000,))
     sql = """INSERT INTO history
                         VALUES (?,0)"""
     cur.execute(sql, (now + 3000000,))
@@ -217,7 +217,7 @@ def init(now):  # just for testing
     cur.execute(sql, (now,))
     sql = """INSERT INTO microphone
                             VALUES (?)"""
-    cur.execute(sql, (now + 1000000,))
+    cur.execute(sql, (now + 1100000,))
     sql = """INSERT INTO microphone
                                 VALUES (?)"""
     cur.execute(sql, (now + 2000000,))
