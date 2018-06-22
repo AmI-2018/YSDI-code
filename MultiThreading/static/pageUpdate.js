@@ -1,4 +1,6 @@
 var ip = "http://";
+var score = 0;
+var count = 0;
 
 function hideInit(){
     $("#init").hide();
@@ -14,11 +16,39 @@ function requestUpdates(){
             var hc = data["history-count"];
             var mc = data["mic-count"];
             var sit = data["sit"];
-            var score = data["score"];
+            var remainingSeconds = data["remainingTime"];
+            var t_a_b = data["TAB"];
+            var pausing = data["pausing"];
+            score = data["score"];
             updateElements("sites-number",hc);
             updateElements("speak-number",mc);
             updateElements("chair-last-bit",sit);
             updateElements("score",score);
+            var b = $("#take-a-break");
+            if (t_a_b === 1 || pausing === 1){
+                b.css("diplay","block");
+                if (t_a_b === 1){
+                    b.text("You should definetely take a break.");
+                }
+                if (pausing===1){
+                    var sec = remainingSeconds % 60;
+                    remainingSeconds = remainingSeconds - sec;
+                    var min = remainingSeconds / 60;
+                    var st = "You still have ";
+                    if (min < 10){
+                        st = st + "0"
+                    }
+                    st = st + min + ":";
+                    if (sec < 10){
+                        st = st + "0";
+                    }
+                    st = st + sec + " minutes";
+                    b.text(st);
+                }
+            }
+            else{
+                b.css("display","none");
+            }
     });
 }
 
@@ -75,6 +105,41 @@ $(document).ready(function() {
         })
         $("#score").click(function () {
             $(".debug").toggleClass("active");
+        })
+        $("#plus-button").click(function() {
+            count = count + 1;
+            $("#counter").text(count);
+        })
+        $("#minus-button").click(function () {
+            if (count>0){
+                count = count - 1;
+            }
+            $("#counter").text(count);
+        })
+        $(".info-of-service button").click(function () {
+            $(".time-amount").toggleClass("active");
+            $("#minute-number").text(score/10);
+        })
+        $("#confirm").click(function () {
+            if (count > 0){
+                if (score/10 >= count){
+                    $.get(
+                        ip+"/functions/pausing/"+count,
+                        function(data){
+                            score = data["newscore"];
+                            updateElements("score", score);
+                        }
+                    )
+                    $(".time-amount").toggleClass("active");
+                    $(".distractions").toggleClass("active");
+                }
+                else{
+                    alert("You don't have enough points!");
+                }
+                count = 0;
+                $("#counter").text(count);
+            }
+
         })
 
     }

@@ -15,6 +15,7 @@ app = Flask(__name__)
 micReTare = False
 micThreshold = 500    # this holds the mic parameters, since we can no longer call functions on a locally running thread
 micRECORD_SECONDS = 5
+remaining_seconds = 90
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]  # not permitted websites
 samplingTime = 5         # seconds
 LUX_THRESHOLD_LOW = 200  # threshold in Lux to regulate light
@@ -22,9 +23,10 @@ LUX_THRESHOLD_HIGH = 400 # threshold in Lux to regulate light
 loop = True              # True --> system is on
 standing = False         # True --> user is repeating the studied topic while standing
 pause = False            # True --> user is taking a break
+should_take_a_break = True #True --> user should take a break
 buffer = []              # Buffer for keeping track of recent distractions --> suggest pause
 distractionsSeries = 0   # Variable for keeping track of the number of distractions in a row --> alarm
-score = 0                # global user score
+score = 20                # global user score
 WEB_TIMEOUT = 10         # duration in seconds of an estimated time needed to read useful info from a web page
 TIME_WINDOW = 30         # duration in seconds of the time range analyzed by the program at each loop
 MAX_PUNISHMENT = WEB_TIMEOUT//3  # number of "studying" actions to be done after having visited a forbidden website
@@ -104,7 +106,15 @@ def report():
     hc = db.HistoryCount()
     mc = db.MicCount()
     last = db.getLastSit()
-    diz = {"history-count": str(hc), "mic-count": str(mc), "sit": str(last), "score": str(score)}
+    if pause:
+        val1 = 1
+    else:
+        val1 = 0
+    if should_take_a_break:
+        val2 = 1
+    else:
+        val2 = 0
+    diz = {"history-count": str(hc), "mic-count": str(mc), "sit": str(last), "score": str(score), "TAB": val2, "pausing": val1, "remainingTime": remaining_seconds}
     jSn = json.dumps(diz)
     return jSn
 
@@ -137,11 +147,23 @@ def repeating():
     return jSn
 
 
-@app.route("/functions/pausing")
-def pausing():
+@app.route("/functions/pausing/<minutes>")
+def pausing(minutes):
+    """
+    :param minutes: -1 --> not limited
+    :return:
+    """
     global pause
+    global score
+    global  should_take_a_break
+    global remaining_seconds
+    should_take_a_break = False
     pause = True
-    jSn = json.dumps({"newScore": score})
+    if int(minutes) != -1:
+        score = score - 10*int(minutes)
+        remaining_seconds = 60*int(minutes)
+        zwm.turnOnPlug("dev1")
+    jSn = json.dumps({"newScore": score, "remainingTime": remaining_seconds})
     return jSn
 
 
@@ -547,6 +569,7 @@ def update(result):  # Analyzes result and, if it's the case, updates the score,
             tot = tot + x
         if tot <= BUFFER_SIZE/2:  # if in average the user got distracted too often, maybe it's better to take a break
             # SUGGEST A BREAK
+            should_take_a_break = True
             print("A break has been suggested")
         else:
             print("A break hasn't been suggested")

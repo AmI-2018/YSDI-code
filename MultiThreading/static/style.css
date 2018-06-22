@@ -47,6 +47,9 @@ header{
 .debug{
     display: none;
 }
+.time-amount{
+    display: none;
+}
 .active{
     display: block;
 }
@@ -129,4 +132,7 @@ header{
     text-align: center;
     font-size: 30px;
     font-style: italic;
+}
+#take-a-break{
+    color: firebrick;
 }

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>YSDI</title>
 
-    <link href="{{ url_for('static', filename="style.css") }}?1.0082" rel="stylesheet">
+    <link href="{{ url_for('static', filename="style.css") }}?1.0085" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='pageUpdate.js') }} ?1.34"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='pageUpdate.js') }}?1.356"></script>
 
 </head>
 
@@ -60,6 +60,17 @@
                         <p class="info-of-service" id="spend-text">How do you want to spend your points?<br><br>
                             <button class="device-button" id="generic-dev-button" class="spend-button">Device1</button><br>
                         </p>
+                        <div class="time-amount">
+                            <p class="available-minutes">You can currently afford this number of minutes: <span id="minute-number"></span>
+                            </p>
+                            <p class="counter-text">
+                                <button id="plus-button">+</button>
+                                <span id="counter">0</span>
+                                <button id="minus-button">-</button>
+                                <br>
+                                <button id="confirm">Confirm</button>
+                            </p>
+                        </div>
                     </div>
 
                     <button class="break-button" id="break-study-button">Keep studying</button>
@@ -71,8 +82,8 @@
 
 
         <div class="score-section">
+            <p class="your-score" id="take-a-break"></p>
             <p class="info-of-service">
-                <br>
                 <span id="init">Taring . . .</span><br>
                 (complete updates occur every 15 seconds)<br>
             </p>
