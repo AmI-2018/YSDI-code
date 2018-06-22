@@ -15,7 +15,7 @@ app = Flask(__name__)
 micReTare = False
 micThreshold = 500    # this holds the mic parameters, since we can no longer call functions on a locally running thread
 micRECORD_SECONDS = 5
-remaining_seconds = 90
+remaining_seconds = 0
 blacklist = ["www.facebook.com", "www.google.it", "www.google.com", "github.com"]  # not permitted websites
 samplingTime = 5         # seconds
 LUX_THRESHOLD_LOW = 200  # threshold in Lux to regulate light
@@ -23,10 +23,10 @@ LUX_THRESHOLD_HIGH = 400 # threshold in Lux to regulate light
 loop = True              # True --> system is on
 standing = False         # True --> user is repeating the studied topic while standing
 pause = False            # True --> user is taking a break
-should_take_a_break = True #True --> user should take a break
+should_take_a_break = False #True --> user should take a break
 buffer = []              # Buffer for keeping track of recent distractions --> suggest pause
 distractionsSeries = 0   # Variable for keeping track of the number of distractions in a row --> alarm
-score = 20                # global user score
+score = 0                # global user score
 WEB_TIMEOUT = 10         # duration in seconds of an estimated time needed to read useful info from a web page
 TIME_WINDOW = 30         # duration in seconds of the time range analyzed by the program at each loop
 MAX_PUNISHMENT = WEB_TIMEOUT//3  # number of "studying" actions to be done after having visited a forbidden website
@@ -155,7 +155,7 @@ def pausing(minutes):
     """
     global pause
     global score
-    global  should_take_a_break
+    global should_take_a_break
     global remaining_seconds
     should_take_a_break = False
     pause = True
@@ -163,6 +163,9 @@ def pausing(minutes):
         score = score - 10*int(minutes)
         remaining_seconds = 60*int(minutes)
         zwm.turnOnPlug("dev1")
+    else:
+        remaining_seconds = -1
+    hlm.turnOff()
     jSn = json.dumps({"newScore": score, "remainingTime": remaining_seconds})
     return jSn
 
@@ -454,12 +457,21 @@ def analyze(chair, desk, web, micr, result):  # this function combines data from
 
     if pause:
         print("Pause recognized")
-        global standing
+        global standing, pause, remaining_seconds
         standing = False
         i = 0
-        while i < TIME_WINDOW:
+        while i < TIME_WINDOW:  # do not give points to the users if taking a break
             result[i] = 0
             i = i + 1
+        if remaining_seconds == -1 and lastChair == 1:  # if taking a break not timed and come back sitting, exit pause
+            remaining_seconds = 0
+            pause = False
+            zwm.turnOffPlug("coffeeMachine")
+        elif remaining_seconds > 0:  # if is a timed pause, decrement time if there's some time left
+            remaining_seconds = remaining_seconds - TIME_WINDOW
+        elif remaining_seconds == 0:  # if the timed pause run out of time, exit from pause
+            pause = False
+            zwm.turnOffPlug("dev1")
     elif standing:
         print("Standing study recognized")
         i = 0
@@ -522,7 +534,7 @@ def setLast(chair, desk, web, micr): # this function takes last values from the 
 
 def update(result):  # Analyzes result and, if it's the case, updates the score, recalls user attention or suggests a break
 
-    global standing, distractionsSeries
+    global standing, distractionsSeries, should_take_a_break
     # if user came back at their sit, exit from Standing mode:
     if lastChair == 1 and standing:
         standing = False
@@ -623,7 +635,7 @@ class scoreThread(Thread):
         # set up environment
         db.ClearAll()
         db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
-        #hlm.init()
+        hlm.init()
 
         time.sleep(30)  # JUST FOR TESTING PURPOSES
 
@@ -648,7 +660,7 @@ class scoreThread(Thread):
 
             update(result)
 
-            #updateLight()
+            updateLight()
 
             time.sleep(TIME_WINDOW)
 
