@@ -162,7 +162,7 @@ def pausing(minutes):
     if int(minutes) != -1:
         score = score - 10*int(minutes)
         remaining_seconds = 60*int(minutes)
-        zwm.turnOnPlug("dev1")
+        #zwm.turnOnPlug("dev1")
     else:
         remaining_seconds = -1
     hlm.turnOff()
@@ -199,6 +199,9 @@ def retrieveChair(chair):                # function receiving list for chair dat
             pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
             pos = TIME_WINDOW - pos
+            if pos >= TIME_WINDOW:
+                pos = TIME_WINDOW-1  # this brute force solution has revealed to be necessary due to the time data
+                # approximations (rounding) that sometimes lead to an index approximated by excess
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
@@ -251,6 +254,9 @@ def retrieveDesk(desk):                 # DOCUMENTATION FOR THIS FUNCTION IS THE
             pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
             pos = TIME_WINDOW - pos
+            if pos >= TIME_WINDOW:
+                pos = TIME_WINDOW-1  # this brute force solution has revealed to be necessary due to the time data
+                # approximations (rounding) that sometimes lead to an index approximated by excess
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
@@ -307,7 +313,9 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
             pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
             pos = TIME_WINDOW - pos
-
+            if pos >= TIME_WINDOW:
+                pos = TIME_WINDOW-1  # this brute force solution has revealed to be necessary due to the time data
+                # approximations (rounding) that sometimes lead to an index approximated by excess
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
@@ -392,6 +400,9 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
         for tupla in data:  # scanning all tuples
             pos = int(toSec(now) - toSec(tupla[0]))
             pos = TIME_WINDOW - pos
+            if pos >= TIME_WINDOW:
+                pos = TIME_WINDOW-1  # this brute force solution has revealed to be necessary due to the time data
+                # approximations (rounding) that sometimes lead to an index approximated by excess
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
@@ -454,10 +465,10 @@ def toMicroSec(sec):     # switching from seconds to microseconds
 
 def analyze(chair, desk, web, micr, result):  # this function combines data from all the sensors and generates result
     # must take into account also standing and pause (and the buffer/var for the distractions/alarm)
-
+    global standing, pause, remaining_seconds
     if pause:
         print("Pause recognized")
-        global standing, pause, remaining_seconds
+        
         standing = False
         i = 0
         while i < TIME_WINDOW:  # do not give points to the users if taking a break
@@ -466,7 +477,7 @@ def analyze(chair, desk, web, micr, result):  # this function combines data from
         if remaining_seconds == -1 and lastChair == 1:  # if taking a break not timed and come back sitting, exit pause
             remaining_seconds = 0
             pause = False
-            zwm.turnOffPlug("coffeeMachine")
+            #zwm.turnOffPlug("coffeeMachine")
         elif remaining_seconds > 0:  # if is a timed pause, decrement time if there's some time left
             remaining_seconds = remaining_seconds - TIME_WINDOW
         elif remaining_seconds == 0:  # if the timed pause run out of time, exit from pause
@@ -563,6 +574,7 @@ def update(result):  # Analyzes result and, if it's the case, updates the score,
     if distractionsSeries > SERIES_TRESHOLD:
         hlm.alarm()
         warning()
+        distractionsSeries = 0
     print(str(distractionsSeries)+"]")
     print("User could have been alarmed")
 
@@ -584,6 +596,7 @@ def update(result):  # Analyzes result and, if it's the case, updates the score,
             should_take_a_break = True
             print("A break has been suggested")
         else:
+            should_take_a_break = False
             print("A break hasn't been suggested")
     print(buffer)
     print("Buffer has been updated")
@@ -591,7 +604,7 @@ def update(result):  # Analyzes result and, if it's the case, updates the score,
 
 
 def updateLight():                  # at each loop cycle the luminosity is checked and, if necessary, light is regulated
-    light = zwm.checkLux()
+    light = 0#zwm.checkLux()
     initialState = hlm.STATE       # just for observing from console
 
     if lastChair == 0:             # if they're no more sitting, desk light can be switched off (let's avoid wastes)
@@ -634,10 +647,10 @@ class scoreThread(Thread):
 
         # set up environment
         db.ClearAll()
-        db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
-        hlm.init()
+        # db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
+        # hlm.init()
 
-        time.sleep(30)  # JUST FOR TESTING PURPOSES
+        # time.sleep(30)  # JUST FOR TESTING PURPOSES
 
         i = 0
         # lists initialization
@@ -660,7 +673,7 @@ class scoreThread(Thread):
 
             update(result)
 
-            updateLight()
+            #updateLight()
 
             time.sleep(TIME_WINDOW)
 
@@ -693,8 +706,13 @@ if __name__ == "__main__": # this thread will host the web interface
     scoreT.start()
 
     writeT = writingThread()
-    #writeT.start()
+    writeT.start()
 
     actualIp = socket.gethostbyname(socket.gethostname())
     print(actualIp)
+    
+    # time.sleep(3)
+    # hlm.turnOn()
+    # hlm.alarm()
+    # warning()
     app.run(host="0.0.0.0", port=8080)
