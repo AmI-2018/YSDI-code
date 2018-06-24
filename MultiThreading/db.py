@@ -78,26 +78,54 @@ def DeskInsert(moving):
 
 
 # The following functions before the # are for the debugging window
-def HistoryCount():
+def DeskLast5():
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
-    sql = """SELECT COUNT(*)
-            FROM history;
+    sql = """
+    SELECT moving
+    FROM desk
+    WHERE ChromeTimestamp > ?
+    ORDER BY ChromeTimestamp DESC;
+    """
+    cur.execute(sql, (tm.ChromeCurrentInstant(10),))
+    strng = ""
+    for i in range(0,5):
+        tupla = cur.fetchone()
+        if tupla is None:
+            strng = strng + "0"
+        else:
+            strng = strng + str(tupla[0])
+    connection.close()
+    return strng
+def HistoryLast():
+    connection = sqlite3.connect(db_path)
+    cur = connection.cursor()
+    sql = """SELECT ChromeTimestamp
+            FROM history
+            ORDER BY 1 DESC;
                 """
     cur.execute(sql)
     tupla = cur.fetchone()
     connection.close()
-    return int(tupla[0])
-def MicCount():
+    if tupla is None:
+        return "None";
+    return str(tm.ChromeTimeToDatetime(tupla[0]))
+def MicLast():
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
-    sql = """SELECT COUNT(*)
-                FROM microphone;
+    sql = """SELECT *
+                FROM microphone
+                ORDER BY ChromeTimestamp DESC;
                     """
     cur.execute(sql)
     tupla = cur.fetchone()
+    if tupla is None:
+        return "None"
+    inizio = tupla[0]
+    fine = inizio + 5e6
+    string = str(tm.ChromeTimeToDatetime(inizio)) + " :: " + str(tm.ChromeTimeToDatetime(fine))
     connection.close()
-    return int(tupla[0])
+    return string
 def getLastSit():
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()

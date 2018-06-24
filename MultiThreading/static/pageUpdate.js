@@ -7,26 +7,26 @@ function hideInit(){
 }
 
 function requestUpdates(){
-    $.getJSON(ip+"/jsData/tare",function (data) {
-            var diz = data["values"];
-            var val = diz["mic"];
-            updateElements("mic-tare",val);
-    });
     $.getJSON(ip+"/jsData/report",function (data) {
-            var hc = data["history-count"];
-            var mc = data["mic-count"];
+            var lh = data["history-last"];
+            var lm = data["mic-last"];
             var sit = data["sit"];
+            var desk = data["desk-last5"];
+            var mic_th = data["mic-threshold"];
+
             var remainingSeconds = data["remainingTime"];
             var t_a_b = data["TAB"];
             var pausing = data["pausing"];
             score = data["score"];
-            updateElements("sites-number",hc);
-            updateElements("speak-number",mc);
-            updateElements("chair-last-bit",sit);
+            updateElements("web-time",lh);
+            updateElements("last-mic",lm);
+            updateElements("last-sit",sit);
+            updateElements("load-cell5",desk);
+            updateElements("mic-threshold",mic_th);
             updateElements("score",score);
             var b = $("#take-a-break");
             if (t_a_b === 1 || pausing === 1){
-                b.css("diplay","block");
+                b.addClass("active");
                 if (t_a_b === 1){
                     b.text("You should definetely take a break.");
                 }
@@ -47,7 +47,7 @@ function requestUpdates(){
                 }
             }
             else{
-                b.css("display","none");
+                b.removeClass("active");
             }
     });
 }
@@ -141,6 +141,27 @@ $(document).ready(function() {
             }
 
         })
+        $("#break-nap-button").click(function () {
+            $(".breaks").toggleClass("active");
+            $.get(
+                ip+"/functions/pausing/-1",
+                function(data){
+                    score = data["newscore"];
+                    updateElements("score", score);
+                }
+            )
+        })
+        $("#break-coffee-button").click(function () {
+            $(".breaks").toggleClass("active");
+            $.get(
+                ip+"/functions/coffee",
+                function(data){
+                    score = data["newscore"];
+                    updateElements("score", score);
+                }
+            )
+        })
+
 
     }
 );

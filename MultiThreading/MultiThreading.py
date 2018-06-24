@@ -82,12 +82,6 @@ def handleMicrophone():
         micReTare = False
     return json.dumps(ret)
 
-@app.route("/jsData/tare")
-def getTares():
-    diz = {"values": {"mic": micThreshold}}
-    jSn = json.dumps(diz)
-    return jSn
-
 
 @app.route("/constants/tare")
 def tare():
@@ -103,9 +97,10 @@ def tare():
 
 @app.route("/jsData/report")
 def report():
-    hc = db.HistoryCount()
-    mc = db.MicCount()
-    last = db.getLastSit()
+    lastH = db.HistoryLast()
+    lastMIC = db.MicLast()
+    lastCH = str(lastChair)
+    last5DSK = db.DeskLast5()
     if pause:
         val1 = 1
     else:
@@ -114,7 +109,7 @@ def report():
         val2 = 1
     else:
         val2 = 0
-    diz = {"history-count": str(hc), "mic-count": str(mc), "sit": str(last), "score": str(score), "TAB": val2, "pausing": val1, "remainingTime": remaining_seconds}
+    diz = {"history-last": lastH, "mic-last": lastMIC, "sit": lastCH, "desk-last5": last5DSK, "mic-threshold": str(micThreshold), "score": str(score), "TAB": val2, "pausing": val1, "remainingTime": remaining_seconds}
     jSn = json.dumps(diz)
     return jSn
 
@@ -147,6 +142,19 @@ def repeating():
     return jSn
 
 
+@app.route("/functions/cofee")
+def coffee():
+    global pause
+    global score
+    global should_take_a_break
+    should_take_a_break = False
+    pause = True
+    zwm.turnOnPlug("coffeeMachine")
+    hlm.turnOff()
+    jSn = json.dumps({"newScore": score})
+    return jSn
+
+
 @app.route("/functions/pausing/<minutes>")
 def pausing(minutes):
     """
@@ -164,7 +172,7 @@ def pausing(minutes):
         remaining_seconds = 60*int(minutes)
         #zwm.turnOnPlug("dev1")
     else:
-        remaining_seconds = -1
+        remaining_seconds = 0
     hlm.turnOff()
     jSn = json.dumps({"newScore": score, "remainingTime": remaining_seconds})
     return jSn

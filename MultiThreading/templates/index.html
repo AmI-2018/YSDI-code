@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>YSDI</title>
 
-    <link href="{{ url_for('static', filename="style.css") }}?1.0085" rel="stylesheet">
+    <link href="{{ url_for('static', filename="style.css") }}?1.0086" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='pageUpdate.js') }}?1.356"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='pageUpdate.js') }}?1.359"></script>
 
 </head>
 
@@ -97,10 +97,11 @@
 
         <p class="debug">
             <br>
-            Current mic tare: <span id="mic-tare"></span><br>
-            N of visited sites: <span id="sites-number"></span><br>
-            N of times i heard you speaking: <span id="speak-number"></span><br>
-            Last data from the chair: <span id="chair-last-bit"></span><br>
+            Last website visit: <span id="web-time"></span><br>
+            Last positive mic recording: <span id="last-mic"></span><br>
+            Last value from the chair: <span id="last-sit"></span><br>
+            Last 5 values from load cell: <span id="load-cell5"></span><br>
+            Mic Threshold: <span id="mic-threshold"></span><br>
         </p>
         <p class="debug" id="ip" myIp={{ myIp }}>{{ myIp }}</p> <!-- DISPLAY:NONE SET BY THE JS, IS NEEDED TO PASS THE NEW IP EACH TIME-->
 

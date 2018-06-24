@@ -50,8 +50,8 @@ header{
 .time-amount{
     display: none;
 }
-.active{
-    display: block;
+#take-a-break{
+    color: firebrick;
 }
 .score-section{
     text-align: center;
@@ -133,6 +133,6 @@ header{
     font-size: 30px;
     font-style: italic;
 }
-#take-a-break{
-    color: firebrick;
+.active{
+    display: block;
 }
