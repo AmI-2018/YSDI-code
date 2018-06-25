@@ -1,4 +1,4 @@
-var ip = "http://192.168.0.47:8080";
+var ip = "http://192.168.1.66:8080";
 var score = 0;
 var count = 0;
 
@@ -26,7 +26,6 @@ function requestUpdates(){
             updateElements("score",score);
             var b = $("#take-a-break");
             if (t_a_b === 1 || pausing === 1){
-                b.addClass("active");
                 if (t_a_b === 1){
                     b.text("You should definetely take a break.");
                 }
@@ -47,7 +46,7 @@ function requestUpdates(){
                 }
             }
             else{
-                b.removeClass("active");
+                b.text("");
             }
     });
 }
