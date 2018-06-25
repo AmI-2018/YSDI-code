@@ -1,4 +1,4 @@
-var ip = "http://";
+var ip = "http://192.168.0.47:8080";
 var score = 0;
 var count = 0;
 
@@ -77,11 +77,11 @@ $(document).ready(function() {
         $("#tare-button").click(tare);
         setInterval(requestUpdates,5000);
 
-        var y = document.getElementById("ip");
+        /*var y = document.getElementById("ip");
         var x = y.getAttribute("myIp");
         ip = ip+x+':8080';
         document.getElementById("ip").style.display = "none";
-
+		*/
         $("#break-button").click(function () {
             $(".breaks").toggleClass("active");
         })

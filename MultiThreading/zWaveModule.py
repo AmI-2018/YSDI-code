@@ -39,7 +39,7 @@ switch_binary = '37'
 sensor_binary = '48'
 sensor_multi = '49'
 
-plugsDict = {'coffeeMachine':'4', 'dev1':'4'}  # TO BE TESTED IN LAB
+plugsDict = {'coffeeMachine':'4', 'dev1':'5'}  # TO BE TESTED IN LAB
 
 def turnOnPlug(type):
 
