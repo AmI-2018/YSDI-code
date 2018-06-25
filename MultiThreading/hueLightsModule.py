@@ -28,107 +28,120 @@ base_url = 'http://192.168.0.201'
 #username = 'newdeveloper'
 username = "fFSt4atQ1zIcis0aAudg4ULMYx9AUiB9VYyDSLfO"
 lights_url = base_url + '/api/' + username + '/lights/'
-# VAL = "5"
+VAL = "5"
 ON = False
 STATE = 0  # 0 for low, 1 for high (BRIGHTNESS)
 
 
-def init():
+def _init(n):
     global ON, STATE
     all_the_lights = rest.send(url=lights_url)
-    for light in all_the_lights:
+    light = str(n)
         # light = VAL  # to be COMMENTED before exam demo
-        url_to_call = lights_url + light + '/state'
-        body = '{ "on" : false }'
-        rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    url_to_call = lights_url + light + '/state'
+    body = '{ "on" : false }'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     ON = False
     STATE = 0
 
 
-def turnOn():
+def _turnOn(n):
     global ON, STATE
     all_the_lights = rest.send(url=lights_url)
+    light = str(n)
     body = '{ "on" : true, "alert":"none", "hue":10000, "bri":25, "sat":100 }'
-    for light in all_the_lights:
         # light = VAL  # to be COMMENTED before exam demo
-        url_to_call = lights_url + light + '/state'
-        rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    url_to_call = lights_url + light + '/state'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     ON = True
     STATE = 0
 
 
-def turnOff():
+def _turnOff(n):
     global ON, STATE
     all_the_lights = rest.send(url=lights_url)
+    light = str(n)
     body = '{ "on" : false, "alert":"none", "hue":0, "bri":25, "sat":254 }'
-    for light in all_the_lights:
         # light = VAL   # to be COMMENTED before exam demo
-        url_to_call = lights_url + light + '/state'
-        rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    url_to_call = lights_url + light + '/state'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     ON = False
     STATE = 0
 
-def alarm():
+def _alarm(n):
     """
     Questa accende la luce, la fa diventare rossa per 2s, poi si rimette nelle condizioni
     iniziali.
     """
     all_the_lights = rest.send(url=lights_url)
-    # light = VAL  # to be COMMENTED before exam demo
+    light = str(n)  # to be COMMENTED before exam demo
 
     initial = {}
     body = '{ "on" : true, "hue":0, "bri":254, "sat":254 }'
 
-    for light in all_the_lights:  # to be ADJUSTED before exam demo
-        dictionary = all_the_lights[light]
-        state = dictionary["state"]
-        initial[light] = state["on"]
+    dictionary = all_the_lights[light]
+    state = dictionary["state"]
+    initial[light] = state["on"]
 
-        url_to_call = lights_url + light + '/state'
+    url_to_call = lights_url + light + '/state'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+
+    time.sleep(0.5)
+
+    for i in range(1, 4):  # to be ADJUSTED before exam demo, select an appropriate number
+        body = '{"bri":10}'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
-
         time.sleep(0.5)
-
-        for i in range(1, 4):  # to be ADJUSTED before exam demo, select an appropriate number
-            body = '{"bri":10}'
-            rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
-            time.sleep(0.5)
-            body = '{"bri":254}'
-            rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
-            time.sleep(0.5)
+        body = '{"bri":254}'
+        rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+        time.sleep(0.5)
 
     #  end of the FOR loop light in all the lights
 
-    for light in all_the_lights:
         # light = VAL  # to be COMMENTED before exam demo
-        if initial[light] == True:
-            body = '{ "on" : true}'
-        else:
-            body = '{ "on" : false}'
+    if initial[light] == True:
+        body = '{ "on" : true}'
+    else:
+        body = '{ "on" : false}'
 
-        url_to_call = lights_url + light + '/state'
-        rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    url_to_call = lights_url + light + '/state'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    time.sleep(0.2)
         #  end of the FOR loop (to be added at line 90)
 
 
-def increaseBrightness():
+def _increaseBrightness(n):
     global STATE
     all_the_lights = rest.send(url=lights_url)
-    for light in all_the_lights:
-        url_to_call = lights_url + light + '/state'
-        body = '{ "bri":125}'
-        rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    light = str(n)
+    url_to_call = lights_url + light + '/state'
+    body = '{ "bri":125}'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     STATE = 1
 
 
-def decreaseBrightness():
+def _decreaseBrightness(n):
     global STATE
     all_the_lights = rest.send(url=lights_url)
-    for light in all_the_lights:
-        url_to_call = lights_url + light + '/state'
-        body = '{ "bri":25}'
-        rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+    light = str(n)
+    url_to_call = lights_url + light + '/state'
+    body = '{ "bri":25}'
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     STATE = 0
+
+#wrappers to be called from outside
+def init():
+    _init(VAL)
+def turnOn():
+    _turnOn(VAL)
+def turnOff():
+    _turnOff(VAL)
+def increaseBrightness():
+    _increaseBrightness(VAL)
+def decreaseBrightness():
+    _decreaseBrightness(VAL)
+def alarm():
+    _alarm(VAL)
 
 
 #il main e solo per debug, must be REMOVED before exam demo
@@ -142,12 +155,15 @@ if __name__ == '__main__':
     # if you are using the emulator, the username is:
     #username = 'newdeveloper'
     init()
-    print("init finita")
+    time.sleep(1)
+    #print("init finita")
     turnOn()
+    time.sleep(2)
     alarm()
-    #turnOff()
+    turnOff()
     """
     all_the_lights = rest.send(url=lights_url)
     for light in all_the_lights:
-        print(light)
+        print(str(light) + " :: " + str(all_the_lights[light]))
+
     """
