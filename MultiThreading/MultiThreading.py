@@ -142,7 +142,7 @@ def repeating():
     return jSn
 
 
-@app.route("/functions/cofee")
+@app.route("/functions/coffee")
 def coffee():
     global pause
     global score
@@ -612,7 +612,7 @@ def update(result):  # Analyzes result and, if it's the case, updates the score,
 
 
 def updateLight():                  # at each loop cycle the luminosity is checked and, if necessary, light is regulated
-    light = 0#zwm.checkLux()
+    light = zwm.checkLux()
     initialState = hlm.STATE       # just for observing from console
 
     if lastChair == 0:             # if they're no more sitting, desk light can be switched off (let's avoid wastes)
@@ -629,6 +629,8 @@ def updateLight():                  # at each loop cycle the luminosity is check
                 hlm.decreaseBrightness()
             elif hlm.ON and hlm.STATE == 0:
                 hlm.turnOff()
+        else:
+            hlm.consistency()
 
     print("["+str(initialState)+"] -> ["+str(hlm.STATE)+"]")
     print('Lights have been regulated')
@@ -656,7 +658,7 @@ class scoreThread(Thread):
         # set up environment
         db.ClearAll()
         # db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
-        # hlm.init()
+        hlm.init()
 
         # time.sleep(30)  # JUST FOR TESTING PURPOSES
 
@@ -681,7 +683,7 @@ class scoreThread(Thread):
 
             update(result)
 
-            #updateLight()
+            updateLight()
 
             time.sleep(TIME_WINDOW)
 

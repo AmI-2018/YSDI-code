@@ -109,7 +109,7 @@ def HistoryLast():
     connection.close()
     if tupla is None:
         return "None";
-    return str(tm.ChromeTimeToDatetime(tupla[0]))
+    return str(tupla[0])
 def MicLast():
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
@@ -123,7 +123,7 @@ def MicLast():
         return "None"
     inizio = tupla[0]
     fine = inizio + 5e6
-    string = str(tm.ChromeTimeToDatetime(inizio)) + " :: " + str(tm.ChromeTimeToDatetime(fine))
+    string = str(inizio) + " :: " + str(fine)
     connection.close()
     return string
 def getLastSit():

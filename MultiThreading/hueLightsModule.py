@@ -28,14 +28,13 @@ base_url = 'http://192.168.0.201'
 #username = 'newdeveloper'
 username = "fFSt4atQ1zIcis0aAudg4ULMYx9AUiB9VYyDSLfO"
 lights_url = base_url + '/api/' + username + '/lights/'
-VAL = "5"
+VAL = "1"
 ON = False
 STATE = 0  # 0 for low, 1 for high (BRIGHTNESS)
 
 
 def _init(n):
     global ON, STATE
-    all_the_lights = rest.send(url=lights_url)
     light = str(n)
         # light = VAL  # to be COMMENTED before exam demo
     url_to_call = lights_url + light + '/state'
@@ -47,7 +46,6 @@ def _init(n):
 
 def _turnOn(n):
     global ON, STATE
-    all_the_lights = rest.send(url=lights_url)
     light = str(n)
     body = '{ "on" : true, "alert":"none", "hue":10000, "bri":25, "sat":100 }'
         # light = VAL  # to be COMMENTED before exam demo
@@ -59,9 +57,8 @@ def _turnOn(n):
 
 def _turnOff(n):
     global ON, STATE
-    all_the_lights = rest.send(url=lights_url)
     light = str(n)
-    body = '{ "on" : false, "alert":"none", "hue":0, "bri":25, "sat":254 }'
+    body = '{ "on" : false}'
         # light = VAL   # to be COMMENTED before exam demo
     url_to_call = lights_url + light + '/state'
     rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
@@ -82,6 +79,7 @@ def _alarm(n):
     dictionary = all_the_lights[light]
     state = dictionary["state"]
     initial[light] = state["on"]
+    brght = state["bri"]
 
     url_to_call = lights_url + light + '/state'
     rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
@@ -89,45 +87,59 @@ def _alarm(n):
     time.sleep(0.5)
 
     for i in range(1, 4):  # to be ADJUSTED before exam demo, select an appropriate number
-        body = '{"bri":10}'
+        body = '{ "on" : true, "hue":0, "sat":254, "bri":10}'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
         time.sleep(0.5)
-        body = '{"bri":254}'
+        body = '{ "on" : true, "hue":0, "sat":254, "bri":254}'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
         time.sleep(0.5)
 
     #  end of the FOR loop light in all the lights
 
-        # light = VAL  # to be COMMENTED before exam demo
     if initial[light] == True:
-        body = '{ "on" : true}'
+        body = '{ "on" : true, "hue":10000, "sat":100, "bri":' + str(brght) + '}'
     else:
-        body = '{ "on" : false}'
+        body = '{ "on" : false, "hue":10000, "sat":100, "bri":' + str(brght) + '}'
 
     url_to_call = lights_url + light + '/state'
     rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
-    time.sleep(0.2)
+    time.sleep(0.1)
         #  end of the FOR loop (to be added at line 90)
 
 
 def _increaseBrightness(n):
     global STATE
-    all_the_lights = rest.send(url=lights_url)
     light = str(n)
     url_to_call = lights_url + light + '/state'
-    body = '{ "bri":125}'
+    body = '{ "on" : true, "hue":10000, "sat":100, "bri":125}'
     rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     STATE = 1
 
 
 def _decreaseBrightness(n):
     global STATE
-    all_the_lights = rest.send(url=lights_url)
     light = str(n)
     url_to_call = lights_url + light + '/state'
-    body = '{ "bri":25}'
+    body = '{ "on" : true, "hue":10000, "sat":100, "bri":25}'
     rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     STATE = 0
+
+
+def _consistency(n):
+    time.sleep(0.1)
+    if ON:
+        if STATE == 0:
+            brght = "25"
+        else:
+            brght = "125"
+        body = '{ "on":true, "hue":10000, "sat":100, "bri":' + brght + '}'
+    else:
+        body = '{ "on":false}'
+
+    light = str(n)
+    url_to_call = lights_url + light + "/state"
+    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
+
 
 #wrappers to be called from outside
 def init():
@@ -142,6 +154,8 @@ def decreaseBrightness():
     _decreaseBrightness(VAL)
 def alarm():
     _alarm(VAL)
+def consistency():
+    _consistency(VAL)
 
 
 #il main e solo per debug, must be REMOVED before exam demo
@@ -154,16 +168,36 @@ if __name__ == '__main__':
     #username = '1jlyVie2nvwtNwl0hv8KdZOO0okdvNcIIdPXWsdX'
     # if you are using the emulator, the username is:
     #username = 'newdeveloper'
+
     init()
     time.sleep(1)
-    #print("init finita")
+
+    #caso 1
     turnOn()
     time.sleep(2)
-    alarm()
+    #alarm()
+    consistency()
+    time.sleep(1)
+
+    #caso 2
+    increaseBrightness()
+    time.sleep(2)
+    #alarm()
+    consistency()
+    time.sleep(1)
+
+    #caso 3
     turnOff()
+    time.sleep(2)
+    #alarm()
+    consistency()
+    time.sleep(1)
+
+
     """
+    #this is to scout the correct light
     all_the_lights = rest.send(url=lights_url)
     for light in all_the_lights:
         print(str(light) + " :: " + str(all_the_lights[light]))
-
     """
+
