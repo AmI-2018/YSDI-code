@@ -51,7 +51,7 @@ if (voltage > threshold)
 if(tmp == 1)
  {
   value = 1;
-  send_to_rasp(value); // send a message to the server informing it when first reading of some weigth greater than threshold;
+  send_to_rasp(value); // send a message to the server, informing it when first reading of some weight greater than threshold;
   tmp = tmp + 1;
  }
 else
@@ -61,10 +61,10 @@ else
     tmp = 0;
     value=0;
     Serial.println(threshold);
-    send_to_rasp(value); // send to raspberry infromation that a null weight is read --> nobody sits on the chair
+    send_to_rasp(value); // send to raspberry information that a null weight is read --> nobody sits on the chair
   }
 }
-delay(1500); // delay the next iteration of the loop by 1.5 milliseconds
+delay(1500); // delay the next iteration of the loop by 1.5 seconds
 }
 
 //////////////////// SEND TO RASP FUNCTION /////////////////////////////////
