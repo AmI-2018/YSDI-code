@@ -1,6 +1,7 @@
 /*AMI 2018 YSDI
  
  -This function has to decide if the Arduino has to send a zero or a one to the raspberry
+ -This is the code for the loadcell
 */
  
 #include "HX711.h"  //You must have this library in your arduino library folder
@@ -18,7 +19,7 @@ void communicate_data(void);
 float calibration_factor = 336355 ;  
 float reading[N];
 int count=0;
-int flag;//this variable is used as  a flag: =1 means that a variation wrt the threshold has been detected; =0 means that nothing has benn detected 
+int flag;//this variable is used as  a flag: =1 means that a variation wrt the threshold has been detected; =0 means that nothing has been detected 
 //=============================================================================================
 //                         SETUP
 //=============================================================================================
@@ -69,7 +70,7 @@ void loop() {
       if (flag == 1)
       {
        Serial.println("Variation");
-       Serial.println(flag); //SEND A 1 TO THE RASPBERRY
+       Serial.println(flag); //send a 1 to the raspberry, variation has been detected
       }
       count=-1;//resetting the counter variable
    }
@@ -103,11 +104,11 @@ void loop() {
   delay(250);
 }
 //=============================================================================================
-//Defining communicate_data function
+//Defining communicate_data function, according to our choice of sending data to the system
 void communicate_data()
 {
   int i;
-  float threshold =0.025;//THIS HAS TO BE CHECKED IN LBA TO GET SOME REASONABLE VALUES
+  float threshold =0.025;//After many trails in the lab, It seems a reasonable value
   for(i=0;i<N-1;i++){
   if((abs(reading[i]-reading[i+1]))>threshold)
   {
