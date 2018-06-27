@@ -1,12 +1,19 @@
+/*
+@author: Matteo Garbarino           --> ip address handling + some of the buttons
+@author: Edoardo Calvi              --> the rest of the code
+ */
+
 var ip = "http://192.168.1.66:8080";
 var score = 0;
 var count = 0;
 
 function hideInit(){
+    //This function hides the "Taring . . . " part of the website after some seconds
     $("#init").hide();
 }
 
 function requestUpdates(){
+    //This function makes HTTP GET requests to retrieve data, and update the page
     $.getJSON(ip+"/jsData/report",function (data) {
             var lh = data["history-last"];
             var lm = data["mic-last"];
@@ -52,6 +59,7 @@ function requestUpdates(){
 }
 
 function updateElements(id,val){
+    //This function changes the text of a certain html element with a given id
     $("#"+id).text(val);
 }
 
@@ -76,11 +84,14 @@ $(document).ready(function() {
         $("#tare-button").click(tare);
         setInterval(requestUpdates,5000);
 
-        /*var y = document.getElementById("ip");
+        /*
+        //This part was written by Matteo Garbarino, it worked with pc tests but not on the raspberry.
+        var y = document.getElementById("ip");
         var x = y.getAttribute("myIp");
         ip = ip+x+':8080';
         document.getElementById("ip").style.display = "none";
 		*/
+
         $("#break-button").click(function () {
             $(".breaks").toggleClass("active");
         })

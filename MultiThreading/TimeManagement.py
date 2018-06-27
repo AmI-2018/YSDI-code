@@ -1,10 +1,18 @@
+"""
+@author: Edoardo Calvi
+
+This file contains useful functions that are called in the main modules of the project:
+it handles the chrome time-format.
+It's the same file in both MultiThreading and UserPC_App.
+"""
+
 import datetime
 import time
 
 
 def delta():
     """
-    :return: intervallo di tempo fisso che intercorre fra il formato standard e quello di chrome
+    :return: fixed time interval between the Chrome time format and the standard one
     """
     ora1 = datetime.datetime.strptime("01-01-1970 00:00", "%d-%m-%Y %H:%M")
     ora2 = datetime.datetime.strptime("01-01-1601 00:00", "%d-%m-%Y %H:%M")
@@ -14,9 +22,9 @@ def delta():
 
 def ChromeTimeToDatetime(timestamp):
     """
-    Converte il timestamp della history in un dato di tipo datetime
-    :param timestamp: prende il timestamp nel formato di chrome, cioe che parte dal 01-01-1601 alle 00:00 in microsecondi
-    :return: dato in formato datetime, cioe che parte dal 01-01-1970 alle 00:00
+    Converts a chrome timestamp into a readable format.
+    :param timestamp: in the chrome format, starting from 01-01-1601 at 00:00, in microseconds
+    :return: data in datetime format, starting from 01-01-1970 at 00:00
     """
     detected = datetime.datetime.fromtimestamp(timestamp / 1e6)
     detected = detected - delta()
@@ -25,9 +33,10 @@ def ChromeTimeToDatetime(timestamp):
 
 def ChromeCurrentInstant(secondi_indietro):
     """
-    Corrente a meno del valore di secondi precedenti in cui guardare l'accaduto.
-    Per l'esatto istante corrente, usare secondi_indietro=0.
-    :return: istante corrente - secondi_indietro
+    Current instant in time format, minus a number of seconds behind: this serves for comparisons
+    with stored timestamps when we want only the ones within a certain interval.
+    For the current instant, call the function with secondi_indietro=0.
+    :return: current instant - secondi_indietro (chrome format)
     """
     seconds = time.mktime(datetime.datetime.now().timetuple()) + (delta().days * 86400) - secondi_indietro
     micros = int(seconds * 1e6)
@@ -35,8 +44,9 @@ def ChromeCurrentInstant(secondi_indietro):
 
 
 def DatetimeCurrentInstant():
+    """
+    Wrapper utility function
+    :return: current instant in readable format
+    """
     return str(datetime.datetime.now())
 
-
-def DatetimeCurrentInstantINT():
-    return datetime.datetime.now()

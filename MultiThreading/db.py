@@ -1,3 +1,9 @@
+"""
+@author: Edoardo Calvi                  --> insertions in the database + tweaks on the readings
+@author: Matteo Garbarino               --> readings from the database + tweaks on the insertions
+This module interfaces with the sqlite3 database.
+"""
+
 import time, sqlite3
 import TimeManagement as tm
 # import os.path                                            # !!!
@@ -10,6 +16,10 @@ db_path = "/home/pi/Desktop/Multithreading/YSDIdb"  # TO BE UPDATED WITH NEW FOL
 
 
 def ClearAll():
+    """
+    Reset previous data and empty the database.
+    :return: /
+    """
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """SELECT name
@@ -25,8 +35,12 @@ def ClearAll():
     connection.close()
 
 
-def MicInsert(instant):  # must added the value parameter
-    #instant = int(tm.ChromeCurrentInstant(0)) - mic.RECORD_SECONDS*1000000 #attualmente l'istante di inizio e' gia' preso dal pc e ce lo manda
+def MicInsert(instant):
+    """
+    Insertion of the timestamp of the start of recording.
+    :param instant: timestamp
+    :return: /
+    """
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """INSERT INTO microphone
@@ -38,6 +52,11 @@ def MicInsert(instant):  # must added the value parameter
 
 
 def HistoryInsert(visits):
+    """
+    Insertion of the visited websites coupled with the info about if they are allowed.
+    :param visits: list of couples [instant, allowed]
+    :return: /
+    """
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """INSERT INTO history
@@ -54,6 +73,11 @@ def HistoryInsert(visits):
 
 
 def ChairInsert(sitting):
+    """
+    Insertion of the current chair value. The timestamp is taken here, on receiver side, because it's sent from Arduino.
+    :param sitting: whether the user is currently sitting
+    :return: /
+    """
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """INSERT INTO chair (ChromeTimestamp, sitting)
@@ -67,6 +91,11 @@ def ChairInsert(sitting):
 
 
 def DeskInsert(moving):
+    """
+    Insertion of data about the writing desk. The timestamp is taken here because it's sent from Arduino.
+    :param moving: whether variations on the load cell were detected
+    :return: /
+    """
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """INSERT INTO desk (ChromeTimestamp, moving)

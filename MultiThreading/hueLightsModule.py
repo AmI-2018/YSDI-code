@@ -17,38 +17,46 @@ See the License for the specific language governing permissions and
 limitations under the License
 
 - - - -
-Modified version for AmI-2018 project called YSDI.
+!!!
+This version has been modified for a AmI-2018 project called YSDI, by:
+Edoardo Calvi       --> most of this code
+Matteo Garbarino    --> some tweaks, tested different versions, added 2 global variables useful for the main thread
 """
 
 import rest
 import time
 
-#base_url = 'http://localhost:8080'
-base_url = 'http://192.168.0.201'
-#username = 'newdeveloper'
-username = "fFSt4atQ1zIcis0aAudg4ULMYx9AUiB9VYyDSLfO"
+#GLOBAL VARS
+base_url = 'http://192.168.0.201'                       #hue bridge
+username = "fFSt4atQ1zIcis0aAudg4ULMYx9AUiB9VYyDSLfO"   #granted by the bridge
 lights_url = base_url + '/api/' + username + '/lights/'
-VAL = "1"
-ON = False
-STATE = 0  # 0 for low, 1 for high (BRIGHTNESS)
+VAL = "1"                                               #N of the hue light we use; this is mandatory when in ladispe
+ON = False                                              #current state of the light
+STATE = 0                                               # 0 for low, 1 for high (BRIGHTNESS)
+#
 
 
 def _init(n):
-    global ON, STATE
-    light = str(n)
-        # light = VAL  # to be COMMENTED before exam demo
-    url_to_call = lights_url + light + '/state'
-    body = '{ "on" : false }'
-    rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
-    ON = False
-    STATE = 0
+    """
+    Reset the light to off. It also used to reset colour, brightness, saturation,
+    but we later discovered that these changes are not accepted when the light is off.
+    It's still here because of code readability.
+    :param n: number of the light
+    :return: /
+    """
+    _turnOff(n)
 
 
 def _turnOn(n):
+    """
+    Turn on the light while setting other parameters as well, hopefully to reduce interferences
+    from other groups as well.
+    :param n: number of the light
+    :return: /
+    """
     global ON, STATE
     light = str(n)
     body = '{ "on" : true, "alert":"none", "hue":10000, "bri":25, "sat":100 }'
-        # light = VAL  # to be COMMENTED before exam demo
     url_to_call = lights_url + light + '/state'
     rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     ON = True
@@ -56,10 +64,14 @@ def _turnOn(n):
 
 
 def _turnOff(n):
+    """
+    Turn off the light. No other parameters can be set to increase consistency when it's set to off.
+    :param n: number of the light
+    :return: /
+    """
     global ON, STATE
     light = str(n)
     body = '{ "on" : false}'
-        # light = VAL   # to be COMMENTED before exam demo
     url_to_call = lights_url + light + '/state'
     rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     ON = False
@@ -67,26 +79,25 @@ def _turnOff(n):
 
 def _alarm(n):
     """
-    Questa accende la luce, la fa diventare rossa per 2s, poi si rimette nelle condizioni
-    iniziali.
+    This function performs the blinking of the strobe red light: it saves the initial configuration
+    (on/off, brightness), blinks, and resets to the initial condition. The sleep() calls are there because
+    it is said in an explicit way on the API that no more than 10 requests per second shall be sent to the bridge.
+    :param n: number of the light
+    :return: /
     """
     all_the_lights = rest.send(url=lights_url)
-    light = str(n)  # to be COMMENTED before exam demo
-
-    initial = {}
-    body = '{ "on" : true, "hue":0, "bri":254, "sat":254 }'
-
+    light = str(n)
     dictionary = all_the_lights[light]
     state = dictionary["state"]
-    initial[light] = state["on"]
+    initial = state["on"]
     brght = state["bri"]
 
+    body = '{ "on" : true, "hue":0, "bri":254, "sat":254 }'                 #set it to our first red blink
     url_to_call = lights_url + light + '/state'
     rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
-
     time.sleep(0.5)
 
-    for i in range(1, 4):  # to be ADJUSTED before exam demo, select an appropriate number
+    for i in range(1, 4):
         body = '{ "on" : true, "hue":0, "sat":254, "bri":10}'
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
         time.sleep(0.5)
@@ -94,20 +105,21 @@ def _alarm(n):
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
         time.sleep(0.5)
 
-    #  end of the FOR loop light in all the lights
-
-    if initial[light] == True:
+    if initial == True:
         body = '{ "on" : true, "hue":10000, "sat":100, "bri":' + str(brght) + '}'
     else:
         body = '{ "on" : false, "hue":10000, "sat":100, "bri":' + str(brght) + '}'
-
     url_to_call = lights_url + light + '/state'
     rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
     time.sleep(0.1)
-        #  end of the FOR loop (to be added at line 90)
 
 
 def _increaseBrightness(n):
+    """
+    After some tests in the lab we found this value of brightness to be already strong. More was disturbing.
+    :param n: number of the light
+    :return: /
+    """
     global STATE
     light = str(n)
     url_to_call = lights_url + light + '/state'
@@ -117,6 +129,11 @@ def _increaseBrightness(n):
 
 
 def _decreaseBrightness(n):
+    """
+    After some tests we found this value of brightness is enough.
+    :param n: number of the light
+    :return: /
+    """
     global STATE
     light = str(n)
     url_to_call = lights_url + light + '/state'
@@ -126,6 +143,13 @@ def _decreaseBrightness(n):
 
 
 def _consistency(n):
+    """
+    This function is used because our tests showed that some of our requests were ignored or not received
+    by the bridge, thus not behaving as expected even if the functions we used were working fine on the
+    simulator. If no other request is sent, this is called, to repeat the state the light should be in.
+    :param n: number of the light
+    :return: /
+    """
     time.sleep(0.1)
     if ON:
         if STATE == 0:
@@ -158,17 +182,9 @@ def consistency():
     _consistency(VAL)
 
 
-#il main e solo per debug, must be REMOVED before exam demo
-if __name__ == '__main__':
-    # the base URL
-    #base_url = 'http://192.168.0.201'
-    # if you are using the emulator, probably the base_url will be:
-    #base_url = 'http://localhost:8080'
-    # example username, generated by following https://www.developers.meethue.com/documentation/getting-started
-    #username = '1jlyVie2nvwtNwl0hv8KdZOO0okdvNcIIdPXWsdX'
-    # if you are using the emulator, the username is:
-    #username = 'newdeveloper'
 
+#main is for debugging reasons
+if __name__ == '__main__':
     init()
     time.sleep(1)
 
@@ -193,11 +209,9 @@ if __name__ == '__main__':
     consistency()
     time.sleep(1)
 
-
     """
-    #this is to scout the correct light
+    #this is to scout the correct light in ladispe
     all_the_lights = rest.send(url=lights_url)
     for light in all_the_lights:
         print(str(light) + " :: " + str(all_the_lights[light]))
     """
-

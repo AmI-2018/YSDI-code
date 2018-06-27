@@ -1,7 +1,15 @@
+"""
+This is the main module of the project. It starts several threads from its main.
+
+@author: Matteo Garbarino       --> manage all the score system + adjust the lights
+@author: Edoardo Calvi          --> almost all of the Flask app + serial communication with Arduino
+@author: Oliviero Vouch         --> serial communication with Arduino
+"""
+
 from flask import Flask, request, render_template
 import json
 from threading import Thread
-from microphone import warning
+from warn import warning
 import db
 import time
 import socket
@@ -43,7 +51,7 @@ carryMicr = 0            #  //
 @app.route("/constants")
 def parametri():
     """
-    :return: un jSon che contiene il sampling time e la blacklist
+    :return: a json containing forbidden sites and sampling time
     """
     toShip = {"blacklist" : blacklist, "samplingTime" : str(samplingTime)}
     jSn = json.dumps(toShip)
@@ -53,7 +61,7 @@ def parametri():
 @app.route("/samples/chromeVisits", methods=["POST"])
 def handleSamples():
     """
-    :return: un jSon che contiene la lunghezza della lista di samples ricevuti
+    :return: a jSon containing the length of the received data
     """
     mappa = json.loads(request.json)
     visits = mappa["pairsTimeSite"]
@@ -65,8 +73,8 @@ def handleSamples():
 @app.route("/samples/microphone", methods=["POST"])
 def handleMicrophone():
     """
-    Riceve un json con chiave "startingInstant" e value l'istante  di inizio reg.
-    :return: il json di arrivo.
+    It receives a dictionary with key "startingInstant" and the instant the recording started as value.
+    :return: (piggybacking) a json with a request to retare the microphone
     """
     global micThreshold, micReTare, micRECORD_SECONDS
     mappa = json.loads(request.json)
@@ -86,9 +94,8 @@ def handleMicrophone():
 @app.route("/constants/tare")
 def tare():
     """
-    Questa dovra fare la tara di tutti gli strumenti, su richiesta!
-    Per cominciare fa solo quella del microfono
-    :return:
+    This function is called when a re-taring operation is requested
+    :return: success
     """
     global micReTare
     micReTare = True
@@ -97,6 +104,10 @@ def tare():
 
 @app.route("/jsData/report")
 def report():
+    """
+    This is called periodically from the web interface to update the values.
+    :return: a json with a dictionary which plenty of info, including debug
+    """
     lastH = db.HistoryLast()
     lastMIC = db.MicLast()
     lastCH = str(lastChair)
@@ -121,6 +132,10 @@ def mainPage():
 
 @app.route("/functions/stopStudying")
 def stop():
+    """
+    Called when the user stops to study, it's just symbolic.
+    :return: modified template
+    """
     global loop
     loop = False
     return render_template("index.html", end=1)
@@ -128,6 +143,10 @@ def stop():
 
 @app.route("/arduino", methods=["POST"])
 def sitting():
+    """
+    Called from Arduino Yun when posting data from the chair
+    :return: success
+    """
     diz = request.json
     db.ChairInsert(diz["value"])
     jSn = json.dumps({"value": 200})
@@ -136,6 +155,11 @@ def sitting():
 
 @app.route("/functions/repeating")
 def repeating():
+    """
+    Called when the user wants to repeat while standing. Beware that this would work better if our microphone
+    was sensitive enough.
+    :return: updated score
+    """
     global standing
     standing = True
     jSn = json.dumps({"newScore": score})
@@ -144,6 +168,10 @@ def repeating():
 
 @app.route("/functions/coffee")
 def coffee():
+    """
+    Turn on the coffee machine when requested
+    :return: score
+    """
     global pause
     global score
     global should_take_a_break
@@ -158,8 +186,9 @@ def coffee():
 @app.route("/functions/pausing/<minutes>")
 def pausing(minutes):
     """
+    This is called for distracting devices and any other break that is not the coffee machine
     :param minutes: -1 --> not limited
-    :return:
+    :return: updated score and info about remaining time
     """
     global pause
     global score

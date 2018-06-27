@@ -19,7 +19,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License
 
-Code reused for the AmI project 2018 YSDI
+Code reused for the AmI project 2018 YSDI.
+Modified by: Matteo Garbarino
 """
 
 import rest

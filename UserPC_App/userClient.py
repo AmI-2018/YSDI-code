@@ -1,6 +1,7 @@
 """
-questo modulo contiene tutte le funzioni più importanti lato userPC.
-Nel main c'è il modo in cui devono essere collegate
+This module contains all the important functions on the user's PC side.
+
+@author: Edoardo Calvi
 """
 
 import requests, os, sqlite3
@@ -10,18 +11,18 @@ import json
 from threading import Thread
 import microphone as mic
 
-blacklist = []
-history = ""
-copied = ""
+blacklist = []                          #retrieved from the local server
+history = ""                            #path of the sqlite file on the pc
+copied = ""                             #path of the copied history (explained in init)
 Ts = 0
 last_check = 0
 
 def checkBlacklist(blacklist, url):
     """
-    Funzione per verificare se un URL è in blacklist
-    :param blacklist: la lista di siti proibiti
-    :param url: url da controllare
-    :return: indice nella lista del sito visitato
+    This function checks if the given URL is in blacklist by checking the first part of it, right after 'http://'
+    :param blacklist: list of forbidden websites
+    :param url: url to be checked
+    :return: index in the blacklist if present, -1 otherwise.
     """
     i = url.find("://") + 3
     subs = url[i : len(url)-1]
@@ -41,17 +42,20 @@ def checkBlacklist(blacklist, url):
 
 def init(base_url):
     """
-    Funzione per inizializzare la blacklist ed i percorsi history e copied
-    :return: -1 se non ricevo una blacklist, 0 se tutto ok
+    This function initializes blacklist and both the history paths.
+    In particular, copying the database is needed because it cannot be accessed otherwise while Google Chrome is running.
+    Also, I found some functions to find the path dynamically, but they seem to work only on some PCs (not mine), as it
+    appears that the location where the database is stored is not the same for everyone.
+    :return: -1 if no blacklist was received, 0 otherwise.
     """
     global history
     global copied
     global blacklist
     global Ts
     global last_check
-    # per il mio pc:
+    # My PC:
     history = "C:\\Users\\user\\AppData\\Local\\Google\\Chrome\\User Data\\Default"
-    # per gli altri:
+    # Others:
     # history = os.path.expanduser('~')+"\\AppData\\Local\\Google\\Chrome\\User Data\\Default"
     copied = os.path.join(history, "YSDI-check")
     history = os.path.join(history, "History")
@@ -68,9 +72,10 @@ def init(base_url):
 
 def sample(visits, base_url):
     """
-    Fa il sampling della browser history e lo invia al server.
-    :param visits: lista, passata vuota, in cui saranno contenute le coppie tempo-sito
-    :return: 0 se Ok, -1 se connection fail, -2 se non è arrivato il sample di là
+    Sampling of the browser history, consequently sent to the local server.
+    :param visits: empty list passed from the outside. It will contain the time-allowed couples.
+    :return: 0 if Ok, -1 if failure in transmission, -2 if data was not received correctly, -3 if no new data was found
+
     """
     global copied
     global last_check
@@ -96,11 +101,9 @@ def sample(visits, base_url):
             visits.append([tupla[1], False])
         else:
             visits.append([tupla[1], True])
-    #print(visits)
     toShip = {"pairsTimeSite" : visits}
     jSn = json.dumps(toShip)
     resp = requests.post(base_url + "/samples/chromeVisits", json=jSn)
-    #print(resp)
     ritorno = resp.json()
     if int(ritorno["length"])!=len(visits):
         return -2
@@ -114,7 +117,6 @@ class audioThread(Thread):          # this thread will manage the microphone
         mic.tare()
     def run(self):
         while True:
-            #print(mic.NOISE_THRESHOLD)
             instant = ChromeCurrentInstant(0)
             mic.record(mic.RECORD_SECONDS)
             val = mic.evaluate()
@@ -125,17 +127,16 @@ class audioThread(Thread):          # this thread will manage the microphone
             mappa = ret.json()
             if mappa["reTare"]:
                 mic.tare()
-            # mic.reproduce()
 
 
 if __name__ == "__main__":
     audio = audioThread()
     audio.start()
     base_url = "http://192.168.1.66:8080"       #questo sarà IP della raspberry
-    #inizializzo
+    #initialize
     while init(base_url)==-1:
         print("Nessuna blacklist")
-    #ciclo di sampling
+    #sampling loop
     while True:
         visits = []
         check = sample(visits, base_url)
