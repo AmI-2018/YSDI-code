@@ -170,7 +170,7 @@ def pausing(minutes):
     if int(minutes) != -1:
         score = score - 10*int(minutes)
         remaining_seconds = 60*int(minutes)
-        #zwm.turnOnPlug("dev1")
+        zwm.turnOnPlug("dev1")
     else:
         remaining_seconds = 0
     hlm.turnOff()
@@ -193,7 +193,7 @@ def retrieveChair(chair):                # function receiving list for chair dat
     global lastChair
     now = tm.ChromeCurrentInstant(0)
     data = db.getSit(toMicroSec(TIME_WINDOW-1), now)
-    if not data:   # if empty list (no values retrieved in last 30 sec fro the sensor)
+    if not data:   # if empty list (no values retrieved in last 30 sec from the sensor)
         i = 0
         while i < TIME_WINDOW:
             chair[i] = lastChair   # then assign value of previous loop (if they were sitting, nothing changed)
@@ -210,6 +210,8 @@ def retrieveChair(chair):                # function receiving list for chair dat
             if pos >= TIME_WINDOW:
                 pos = TIME_WINDOW-1  # this brute force solution has revealed to be necessary due to the time data
                 # approximations (rounding) that sometimes lead to an index approximated by excess
+            elif pos < 0:  # this actually never happened, but for robustness we put this check
+                pos = 0
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
@@ -265,6 +267,8 @@ def retrieveDesk(desk):                 # DOCUMENTATION FOR THIS FUNCTION IS THE
             if pos >= TIME_WINDOW:
                 pos = TIME_WINDOW-1  # this brute force solution has revealed to be necessary due to the time data
                 # approximations (rounding) that sometimes lead to an index approximated by excess
+            elif pos < 0:  # this actually never happened, but for robustness we put this check
+                pos = 0
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
@@ -324,6 +328,8 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
             if pos >= TIME_WINDOW:
                 pos = TIME_WINDOW-1  # this brute force solution has revealed to be necessary due to the time data
                 # approximations (rounding) that sometimes lead to an index approximated by excess
+            elif pos < 0:  # this actually never happened, but for robustness we put this check
+                pos = 0
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
@@ -411,6 +417,8 @@ def retrieveMic(micr):                      # DOCUMENTATION FOR THIS FUNCTION IS
             if pos >= TIME_WINDOW:
                 pos = TIME_WINDOW-1  # this brute force solution has revealed to be necessary due to the time data
                 # approximations (rounding) that sometimes lead to an index approximated by excess
+            elif pos < 0:  # this actually never happened, but for robustness we put this check
+                pos = 0
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
                 i = 0
                 while i < pos and i < TIME_WINDOW:
@@ -485,7 +493,7 @@ def analyze(chair, desk, web, micr, result):  # this function combines data from
         if remaining_seconds == -1 and lastChair == 1:  # if taking a break not timed and come back sitting, exit pause
             remaining_seconds = 0
             pause = False
-            #zwm.turnOffPlug("coffeeMachine")
+            zwm.turnOffPlug("coffeeMachine")
         elif remaining_seconds > 0:  # if is a timed pause, decrement time if there's some time left
             remaining_seconds = remaining_seconds - TIME_WINDOW
         elif remaining_seconds == 0:  # if the timed pause run out of time, exit from pause
@@ -497,9 +505,11 @@ def analyze(chair, desk, web, micr, result):  # this function combines data from
         punishmentCounter = 0
         while i < TIME_WINDOW:
             if web[i] == -1:
-                punishmentCounter = MAX_PUNISHMENT  # whenever the user visits a forbidden website, then he has to do MAX_PUNISHMENT good actions
+                punishmentCounter = MAX_PUNISHMENT  # whenever the user visits a forbidden website, then he has
+                                                    # to do MAX_PUNISHMENT number of good actions
             elif (web[i] > 0 or micr[i] > WEB_TIMEOUT*0.80) and punishmentCounter > 0:  # these are the good actions
-                # it's balanced in such a way to require more seconds of good actions with respect to the seconds considered from visiting a single good website
+                # it's balanced in such a way to require more seconds of good actions with respect to the seconds
+                # considered from visiting a single good website
                 punishmentCounter = punishmentCounter - 1
             if micr[i] > 0 and punishmentCounter == 0:
                 result[i] = 1
@@ -516,9 +526,11 @@ def analyze(chair, desk, web, micr, result):  # this function combines data from
             else:              # if sitting and ...
 
                 if web[i] == -1:  # check web activity
-                    punishmentCounter = MAX_PUNISHMENT  # whenever user visits a forbidden website, then he has to do MAX_PUNISHMENT good actions
+                    punishmentCounter = MAX_PUNISHMENT  # whenever user visits a forbidden website, then he has
+                                                        # to do MAX_PUNISHMENT number of good actions
                 elif (web[i] > WEB_TIMEOUT*0.80 or desk[i] > 0) and punishmentCounter > 0:  # these are the good actions
-                    # it's balanced in such a way to require more seconds of good actions with respect to the seconds considered from visiting a single good website
+                    # it's balanced in such a way to require more seconds of good actions with respect to the seconds
+                    # considered from visiting a single good website
                     punishmentCounter = punishmentCounter - 1
 
                 if punishmentCounter > 0:  # if he has to pay the fee, no points
@@ -536,7 +548,7 @@ def analyze(chair, desk, web, micr, result):  # this function combines data from
     print('----------------------------')
 
 
-def setLast(chair, desk, web, micr): # this function takes last values from the data lists and stores them for next loop
+def setLast(chair, desk):  # this function takes last values from the data lists and stores them for next loop
     global lastChair
     global lastDesk
 
@@ -551,7 +563,7 @@ def setLast(chair, desk, web, micr): # this function takes last values from the 
     print('----------------------------')
 
 
-def update(result):  # Analyzes result and, if it's the case, updates the score, recalls user attention or suggests a break
+def update(result):  # Analyzes result and possibly updates the score, recalls user attention or suggests a break
 
     global standing, distractionsSeries, should_take_a_break
     # if user came back at their sit, exit from Standing mode:
@@ -559,7 +571,7 @@ def update(result):  # Analyzes result and, if it's the case, updates the score,
         standing = False
         print("Exiting from Standing mode")
 
-    # score part:
+    # Score part:
     tot = 0
     scoreUpdated = False
     for i in result:  # counts how many seconds have been evaluated as "studying"
@@ -600,7 +612,6 @@ def update(result):  # Analyzes result and, if it's the case, updates the score,
         for x in buffer:
             tot = tot + x
         if tot <= BUFFER_SIZE/2:  # if in average the user got distracted too often, maybe it's better to take a break
-            # SUGGEST A BREAK
             should_take_a_break = True
             print("A break has been suggested")
         else:
@@ -613,18 +624,18 @@ def update(result):  # Analyzes result and, if it's the case, updates the score,
 
 def updateLight():                  # at each loop cycle the luminosity is checked and, if necessary, light is regulated
     light = zwm.checkLux()
-    initialState = hlm.STATE       # just for observing from console
+    initialState = hlm.STATE       # just for observing from console: DEBUG variable --> used to print
 
     if lastChair == 0:             # if they're no more sitting, desk light can be switched off (let's avoid wastes)
         if hlm.ON:
             hlm.turnOff()
     else:
-        if light < LUX_THRESHOLD_LOW: # if light is too low turn on the bulb or, if it's already on, increase brightness
+        if light < LUX_THRESHOLD_LOW:  # if light is too low: turn on or, if it's already on, increase brightness
             if hlm.ON:
                 hlm.increaseBrightness()
             else:
                 hlm.turnOn()
-        elif light > LUX_THRESHOLD_HIGH: # if light too high decrease brightness if it's high or turn off bulb otherwise
+        elif light > LUX_THRESHOLD_HIGH:  # if light too high: decrease brightness if it's high, or turn off otherwise
             if hlm.ON and hlm.STATE == 1:
                 hlm.decreaseBrightness()
             elif hlm.ON and hlm.STATE == 0:
@@ -655,15 +666,14 @@ class scoreThread(Thread):
         micr = []
         result = []
 
-        # set up environment
+        # Set up environment
         db.ClearAll()
-        # db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
         hlm.init()
-
+        # db.init(tm.ChromeCurrentInstant(0))  # JUST FOR TESTING PURPOSES
         # time.sleep(30)  # JUST FOR TESTING PURPOSES
 
+        # Lists initialization
         i = 0
-        # lists initialization
         while i < TIME_WINDOW:
             chair.append(0)
             desk.append(0)
@@ -679,7 +689,7 @@ class scoreThread(Thread):
 
             analyze(chair, desk, web, micr, result)
 
-            setLast(chair, desk, web, micr)
+            setLast(chair, desk)
 
             update(result)
 
@@ -708,9 +718,7 @@ class writingThread(Thread):
             time.sleep(1)  # sleep 1 seconds
 
 
-if __name__ == "__main__": # this thread will host the web interface
-    db.ClearAll()
-    # warning()
+if __name__ == "__main__":  # this thread will start the other threads and host the web interface
 
     scoreT = scoreThread()
     scoreT.start()
@@ -720,9 +728,5 @@ if __name__ == "__main__": # this thread will host the web interface
 
     actualIp = socket.gethostbyname(socket.gethostname())
     print(actualIp)
-    
-    # time.sleep(3)
-    # hlm.turnOn()
-    # hlm.alarm()
-    # warning()
+
     app.run(host="0.0.0.0", port=8080)

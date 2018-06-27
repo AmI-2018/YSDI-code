@@ -39,7 +39,7 @@ switch_binary = '37'
 sensor_binary = '48'
 sensor_multi = '49'
 
-plugsDict = {'coffeeMachine':'4', 'dev1':'5'}  # TO BE TESTED IN LAB
+plugsDict = {'coffeeMachine':'4', 'dev1':'5'}  # To be possibly updated if excluding/including devices
 
 def turnOnPlug(type):
 
@@ -49,7 +49,7 @@ def turnOnPlug(type):
 
     # get z-wave devices
     all_devices = rest.send(url=base_url + '/ZWaveAPI/Data/0', auth=(username, password))
-    # without auth, omit the last parameter
+    # without auth, omit the last parameter:
     # all_devices = rest.send(url=base_url + '/ZWaveAPI/Data/0')
 
     # clean up all_devices
@@ -81,7 +81,7 @@ def turnOffPlug(type):
 
     # get z-wave devices
     all_devices = rest.send(url=base_url + '/ZWaveAPI/Data/0', auth=(username, password))
-    # without auth, omit the last parameter
+    # without auth, omit the last parameter:
     # all_devices = rest.send(url=base_url + '/ZWaveAPI/Data/0')
 
     # clean up all_devices

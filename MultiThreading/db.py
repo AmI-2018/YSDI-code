@@ -1,11 +1,13 @@
 import time, sqlite3
 import TimeManagement as tm
-import os.path
+# import os.path                                            # !!!
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, "YSDIdb")
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))     # !!!
+# db_path = os.path.join(BASE_DIR, "YSDIdb")                # this works on PCs, but not on the raspberry
 # test per rasp
-# db_path = "/home/pi/Desktop/Multithreading/YSDIdb"
+db_path = "/home/pi/Desktop/Multithreading/YSDIdb"  # TO BE UPDATED WITH NEW FOLDER NAME
+                                                    # ONCE THE FILES WILL BE PUT ON THE RASPBERRY !!!
+
 
 def ClearAll():
     connection = sqlite3.connect(db_path)
@@ -24,7 +26,7 @@ def ClearAll():
 
 
 def MicInsert(instant):  # must added the value parameter
-    #instant = int(tm.ChromeCurrentInstant(0)) - mic.RECORD_SECONDS*1000000 #attualmente l'istante di inizio è già preso dal pc e ce lo manda
+    #instant = int(tm.ChromeCurrentInstant(0)) - mic.RECORD_SECONDS*1000000 #attualmente l'istante di inizio e' gia' preso dal pc e ce lo manda
     connection = sqlite3.connect(db_path)
     cur = connection.cursor()
     sql = """INSERT INTO microphone
@@ -108,7 +110,7 @@ def HistoryLast():
     tupla = cur.fetchone()
     connection.close()
     if tupla is None:
-        return "None";
+        return "None"
     return str(tupla[0])
 def MicLast():
     connection = sqlite3.connect(db_path)
@@ -217,7 +219,7 @@ def init(now):  # just for testing
                         VALUES (?,1)"""
     cur.execute(sql, (now + 10000000,))
 
-        # desk:
+    # desk:
     sql = """INSERT INTO desk
                     VALUES (?,0)"""
     cur.execute(sql, (now,))
