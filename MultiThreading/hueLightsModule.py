@@ -30,7 +30,7 @@ import time
 base_url = 'http://192.168.0.201'                       #hue bridge
 username = "fFSt4atQ1zIcis0aAudg4ULMYx9AUiB9VYyDSLfO"   #granted by the bridge
 lights_url = base_url + '/api/' + username + '/lights/'
-VAL = "1"                                               #N of the hue light we use; this is mandatory when in ladispe
+VAL = "5"                                               #N of the hue light we use; this is mandatory when in ladispe
 ON = False                                              #current state of the light
 STATE = 0                                               # 0 for low, 1 for high (BRIGHTNESS)
 #
@@ -191,22 +191,22 @@ if __name__ == '__main__':
     #caso 1
     turnOn()
     time.sleep(2)
-    #alarm()
-    consistency()
+    alarm()
+    #consistency()
     time.sleep(1)
 
     #caso 2
     increaseBrightness()
     time.sleep(2)
-    #alarm()
-    consistency()
+    alarm()
+    #consistency()
     time.sleep(1)
 
     #caso 3
     turnOff()
     time.sleep(2)
-    #alarm()
-    consistency()
+    alarm()
+    #consistency()
     time.sleep(1)
 
     """

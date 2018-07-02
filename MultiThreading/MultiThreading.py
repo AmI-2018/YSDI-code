@@ -34,7 +34,7 @@ pause = False            # True --> user is taking a break
 should_take_a_break = False #True --> user should take a break
 buffer = []              # Buffer for keeping track of recent distractions --> suggest pause
 distractionsSeries = 0   # Variable for keeping track of the number of distractions in a row --> alarm
-score = 0                # global user score
+score = 15                # global user score
 WEB_TIMEOUT = 10         # duration in seconds of an estimated time needed to read useful info from a web page
 TIME_WINDOW = 30         # duration in seconds of the time range analyzed by the program at each loop
 MAX_PUNISHMENT = WEB_TIMEOUT//3  # number of "studying" actions to be done after having visited a forbidden website
@@ -53,7 +53,7 @@ def parametri():
     """
     :return: a json containing forbidden sites and sampling time
     """
-    toShip = {"blacklist" : blacklist, "samplingTime" : str(samplingTime)}
+    toShip = {"blacklist" : blacklist, "samplingTime" : str(samplingTime), "RaspNow" : tm.ChromeCurrentInstant(0)}
     jSn = json.dumps(toShip)
     return jSn
 
@@ -149,6 +149,7 @@ def sitting():
     """
     diz = request.json
     db.ChairInsert(diz["value"])
+    print("Chair: " + str(diz["value"]))
     jSn = json.dumps({"value": 200})
     return jSn
 
@@ -175,10 +176,12 @@ def coffee():
     global pause
     global score
     global should_take_a_break
+    global remaining_seconds
     should_take_a_break = False
     pause = True
     zwm.turnOnPlug("coffeeMachine")
     hlm.turnOff()
+    remaining_seconds = -1
     jSn = json.dumps({"newScore": score})
     return jSn
 
@@ -201,7 +204,7 @@ def pausing(minutes):
         remaining_seconds = 60*int(minutes)
         zwm.turnOnPlug("dev1")
     else:
-        remaining_seconds = 0
+        remaining_seconds = -1
     hlm.turnOff()
     jSn = json.dumps({"newScore": score, "remainingTime": remaining_seconds})
     return jSn
@@ -337,7 +340,9 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
                                             # from previous loop
     now = tm.ChromeCurrentInstant(0)
     data = db.getHist(toMicroSec(TIME_WINDOW-1), now)
+    print(data)
     if not data:
+        print("data not found")
         i = 0
         while i < TIME_WINDOW and carryWeb > 0:
             web[i] = carryWeb
@@ -347,6 +352,7 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
             web[i] = 0
             i = i + 1
     else:
+        print("data found")
         tupleNumber = 0
         previousPos = 0
 
@@ -354,12 +360,15 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
             pos = int(toSec(now) - toSec(tupla[0]))
             val = int(tupla[1])
             pos = TIME_WINDOW - pos
+            print("Putting in pos: " + str(pos))
+            print(str(toSec(now)))
             if pos >= TIME_WINDOW:
                 pos = TIME_WINDOW-1  # this brute force solution has revealed to be necessary due to the time data
                 # approximations (rounding) that sometimes lead to an index approximated by excess
             elif pos < 0:  # this actually never happened, but for robustness we put this check
                 pos = 0
             if pos > 0 and tupleNumber == 0:  # if 1st time I insert and I do not have to do it in head, fill up to pos
+                print("Case A")
                 i = 0
                 while i < pos and i < TIME_WINDOW:
                     if carryWeb > 0:
@@ -379,6 +388,7 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
                 previousPos = pos
 
             elif pos > (previousPos + 1):  # if not 1st insert and I do not have to do it next to prev, fill up to pos
+                print("Case B")
                 i = previousPos + 1
                 while i < pos and i < TIME_WINDOW:
                     if carryWeb > 0:
@@ -397,6 +407,7 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
                 previousPos = pos
 
             else:                         # completing if incomplete (maybe last val was not in the last cell)
+                print("Case C")
                 if val == 1:
                     carryWeb = WEB_TIMEOUT
                     web[pos] = carryWeb
@@ -410,6 +421,7 @@ def retrieveWeb(web):                       # DOCUMENTATION FOR THIS FUNCTION IS
             tupleNumber = tupleNumber + 1
 
         if previousPos < TIME_WINDOW-1:     # completing if incomplete
+            print("Case D")
             i = previousPos+1
             while i < TIME_WINDOW:
                 web[i] = carryWeb
@@ -523,11 +535,15 @@ def analyze(chair, desk, web, micr, result):  # this function combines data from
             remaining_seconds = 0
             pause = False
             zwm.turnOffPlug("coffeeMachine")
+            print("Terminating pause")
         elif remaining_seconds > 0:  # if is a timed pause, decrement time if there's some time left
             remaining_seconds = remaining_seconds - TIME_WINDOW
         elif remaining_seconds == 0:  # if the timed pause run out of time, exit from pause
             pause = False
             zwm.turnOffPlug("dev1")
+            hlm.alarm()
+            warning()
+            print("Terminating pause")
     elif standing:
         print("Standing study recognized")
         i = 0
@@ -594,7 +610,7 @@ def setLast(chair, desk):  # this function takes last values from the data lists
 
 def update(result):  # Analyzes result and possibly updates the score, recalls user attention or suggests a break
 
-    global standing, distractionsSeries, should_take_a_break
+    global standing, distractionsSeries, should_take_a_break, buffer
     # if user came back at their sit, exit from Standing mode:
     if lastChair == 1 and standing:
         standing = False
@@ -615,12 +631,13 @@ def update(result):  # Analyzes result and possibly updates the score, recalls u
     print('Score has been updated')
 
     # Recall user attention if necessary:
+    print(pause)
     print("[" + str(distractionsSeries) + "] -> [", end='')
-    if scoreUpdated == False:
+    if ((scoreUpdated == False) and (pause == False)):
         distractionsSeries = distractionsSeries + 1
     else:
         distractionsSeries = 0
-    if distractionsSeries > SERIES_TRESHOLD:
+    if ((distractionsSeries > SERIES_TRESHOLD) and (pause == False)):
         hlm.alarm()
         warning()
         distractionsSeries = 0
@@ -628,15 +645,17 @@ def update(result):  # Analyzes result and possibly updates the score, recalls u
     print("User could have been alarmed")
 
     # Update buffer and possibly suggest a break:
-    if len(buffer) >= BUFFER_SIZE:
+    if ((len(buffer) >= BUFFER_SIZE) and (pause == False)):
         buffer.pop()  # remove oldest element from the buffer
 
-    if scoreUpdated:
+    if scoreUpdated and (pause == False):
         buffer.insert(0, 1)  # insert new positive outcome in the head of the buffer
-    else:
+    elif pause == False:
         buffer.insert(0, 0)  # insert new negative outcome in the head of the buffer
-
-    if len(buffer) >= BUFFER_SIZE:  # only if buffer is full check its status, otherwise we're at the beginning
+    else:
+        buffer = []
+    
+    if ((len(buffer) >= BUFFER_SIZE) and (pause == False)):   # only if buffer is full check its status, otherwise we're at the beginning
         tot = 0
         for x in buffer:
             tot = tot + x

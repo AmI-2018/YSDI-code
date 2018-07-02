@@ -3,7 +3,7 @@
 @author: Edoardo Calvi              --> the rest of the code
  */
 
-var ip = "http://192.168.1.66:8080";
+var ip = "http://192.168.0.47:8080";
 var score = 0;
 var count = 0;
 
@@ -37,7 +37,14 @@ function requestUpdates(){
                     b.text("You should definetely take a break.");
                 }
                 if (pausing===1){
-                    var sec = remainingSeconds % 60;
+                    var sec;
+                    if (remainingSeconds < 0){
+			sec = 0;
+                        remainingSeconds = 0;
+                    }
+                    else{
+                        sec = remainingSeconds % 60
+                    }
                     remainingSeconds = remainingSeconds - sec;
                     var min = remainingSeconds / 60;
                     var st = "You still have ";

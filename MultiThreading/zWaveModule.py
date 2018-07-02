@@ -100,7 +100,7 @@ def turnOffPlug(type):
             for instance in all_devices[device_key]['instances']:
                 # search for the SwitchBinary (37) command class, i.e., power outlets
                 if switch_binary in all_devices[device_key]['instances'][instance]['commandClasses']:
-                    print('Turning on device %s...' % device_key)
+                    print('Turning off device %s...' % device_key)
                     # turn it off (0)
                     url_to_call = (device_url + '.Set(0)').format(device_key, instance, switch_binary)
                     rest.send(url=url_to_call, auth=(username, password))

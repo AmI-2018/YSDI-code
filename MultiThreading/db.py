@@ -11,7 +11,7 @@ import TimeManagement as tm
 # BASE_DIR = os.path.dirname(os.path.abspath(__file__))     # !!!
 # db_path = os.path.join(BASE_DIR, "YSDIdb")                # this works on PCs, but not on the raspberry
 # test per rasp
-db_path = "/home/pi/Desktop/Multithreading/YSDIdb"  # TO BE UPDATED WITH NEW FOLDER NAME
+db_path = "/home/pi/Desktop/MultiThreading/YSDIdb"  # TO BE UPDATED WITH NEW FOLDER NAME
                                                     # ONCE THE FILES WILL BE PUT ON THE RASPBERRY !!!
 
 
