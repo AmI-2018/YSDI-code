@@ -16,6 +16,7 @@ history = ""                            #path of the sqlite file on the pc
 copied = ""                             #path of the copied history (explained in init)
 Ts = 0
 last_check = 0
+rasp_diff = 0
 
 def checkBlacklist(blacklist, url):
     """
@@ -53,6 +54,7 @@ def init(base_url):
     global blacklist
     global Ts
     global last_check
+    global rasp_diff
     # My PC:
     history = "C:\\Users\\user\\AppData\\Local\\Google\\Chrome\\User Data\\Default"
     # Others:
@@ -61,13 +63,15 @@ def init(base_url):
     history = os.path.join(history, "History")
     info = requests.get(base_url + "/constants").json()
     l = info["blacklist"]
+    rasp_time = info["RaspNow"]
+    rasp_diff = ChromeCurrentInstant(0) - rasp_time
     if len(l) == 0:
         return -1
     Ts = int(info["samplingTime"])
     blacklist = []
     for elem in l:
         blacklist.append(elem)
-    last_check = ChromeCurrentInstant(60)
+    last_check = ChromeCurrentInstant(10)
     return 0
 
 def sample(visits, base_url):
@@ -98,9 +102,9 @@ def sample(visits, base_url):
     for tupla in risultati:
         isVisited = checkBlacklist(blacklist, tupla[0])
         if isVisited != -1:
-            visits.append([tupla[1], False])
+            visits.append([int(tupla[1]) - rasp_diff, False])
         else:
-            visits.append([tupla[1], True])
+            visits.append([int(tupla[1]) - rasp_diff, True])
     toShip = {"pairsTimeSite" : visits}
     jSn = json.dumps(toShip)
     resp = requests.post(base_url + "/samples/chromeVisits", json=jSn)
@@ -117,7 +121,7 @@ class audioThread(Thread):          # this thread will manage the microphone
         mic.tare()
     def run(self):
         while True:
-            instant = ChromeCurrentInstant(0)
+            instant = ChromeCurrentInstant(0) - rasp_diff
             mic.record(mic.RECORD_SECONDS)
             val = mic.evaluate()
             print(val)
@@ -132,7 +136,7 @@ class audioThread(Thread):          # this thread will manage the microphone
 if __name__ == "__main__":
     audio = audioThread()
     audio.start()
-    base_url = "http://192.168.1.66:8080"       #questo sarà IP della raspberry
+    base_url = "http://192.168.0.47:8080"       #questo sarà IP della raspberry
     #initialize
     while init(base_url)==-1:
         print("Nessuna blacklist")
@@ -150,5 +154,6 @@ if __name__ == "__main__":
             mappa = []
             for coppia in visits:
                 mappa.append([str(ChromeTimeToDatetime(coppia[0])), coppia[1] ])
+                #mappa.append([coppia[0], coppia[1]] )
             print(mappa)
         time.sleep(Ts)

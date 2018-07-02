@@ -2,17 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8fce632f-f8d5-473d-a2d4-263443698cb3" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/warn.py" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/MultiThreading.py" afterPath="$PROJECT_DIR$/MultiThreading.py" />
-      <change beforePath="$PROJECT_DIR$/TimeManagement.py" afterPath="$PROJECT_DIR$/TimeManagement.py" />
-      <change beforePath="$PROJECT_DIR$/db.py" afterPath="$PROJECT_DIR$/db.py" />
-      <change beforePath="$PROJECT_DIR$/hueLightsModule.py" afterPath="$PROJECT_DIR$/hueLightsModule.py" />
-      <change beforePath="$PROJECT_DIR$/microphone.py" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/static/pageUpdate.js" afterPath="$PROJECT_DIR$/static/pageUpdate.js" />
-      <change beforePath="$PROJECT_DIR$/static/style.css" afterPath="$PROJECT_DIR$/static/style.css" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" afterPath="$PROJECT_DIR$/templates/index.html" />
-      <change beforePath="$PROJECT_DIR$/zWaveModule.py" afterPath="$PROJECT_DIR$/zWaveModule.py" />
+      <change beforePath="$PROJECT_DIR$/../Arduino_codes/PRESSURE_SENSOR/pressure_sensor.ino" afterPath="$PROJECT_DIR$/../Arduino_codes/PRESSURE_SENSOR/pressure_sensor.ino" />
+      <change beforePath="$PROJECT_DIR$/../UserPC_App/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../UserPC_App/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/../UserPC_App/output.wav" afterPath="$PROJECT_DIR$/../UserPC_App/output.wav" />
+      <change beforePath="$PROJECT_DIR$/../UserPC_App/tare.wav" afterPath="$PROJECT_DIR$/../UserPC_App/tare.wav" />
+      <change beforePath="$PROJECT_DIR$/../UserPC_App/userClient.py" afterPath="$PROJECT_DIR$/../UserPC_App/userClient.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -123,7 +117,7 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1604">
+            <state relative-caret-position="84">
               <caret line="4" column="40" lean-forward="false" selection-start-line="4" selection-start-column="40" selection-end-line="4" selection-end-column="40" />
               <folding />
             </state>
@@ -133,39 +127,10 @@
       <file leaf-file-name="db.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/db.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3339">
+            <state relative-caret-position="2016">
               <caret line="96" column="14" lean-forward="false" selection-start-line="96" selection-start-column="14" selection-end-line="96" selection-end-column="14" />
               <folding>
                 <element signature="e#253#273#0" expanded="true" />
-                <marker date="1530132160270" expanded="true" signature="930:1003" ph="SELECT name sqlite_master" />
-                <marker date="1530132160270" expanded="true" signature="1080:1094" ph="DELETE FROM " />
-                <marker date="1530132160270" expanded="true" signature="1442:1487" ph="INSERT INTO microphone... " />
-                <marker date="1530132160270" expanded="true" signature="1864:1910" ph="INSERT INTO history... " />
-                <marker date="1530132160270" expanded="true" signature="2473:2540" ph="INSERT INTO chair... " />
-                <marker date="1530132160270" expanded="true" signature="3007:3072" ph="INSERT INTO desk... " />
-                <marker date="1530132160270" expanded="true" signature="3398:3489" ph="SELECT movin... desk" />
-                <marker date="1530132160270" expanded="true" signature="3881:3956" ph="SELECT Chrom... history" />
-                <marker date="1530132160270" expanded="true" signature="4218:4304" ph="SELECT * FRO... microphone" />
-                <marker date="1530132160270" expanded="true" signature="4658:4739" ph="SELECT sitti... chair" />
-                <marker date="1530132160270" expanded="true" signature="5035:5119" ph="SELECT * FRO... history" />
-                <marker date="1530132160270" expanded="true" signature="5376:5457" ph="SELECT * FRO... desk" />
-                <marker date="1530132160270" expanded="true" signature="5713:5792" ph="SELECT * FRO... microphone" />
-                <marker date="1530132160270" expanded="true" signature="6044:6118" ph="SELECT * FRO... chair" />
-                <marker date="1530132160270" expanded="true" signature="6393:6439" ph="INSERT INTO chair... " />
-                <marker date="1530132160270" expanded="true" signature="6485:6535" ph="INSERT INTO chair... " />
-                <marker date="1530132160270" expanded="true" signature="6591:6641" ph="INSERT INTO chair... " />
-                <marker date="1530132160270" expanded="true" signature="6695:6749" ph="INSERT INTO chair... " />
-                <marker date="1530132160270" expanded="true" signature="6819:6868" ph="INSERT INTO desk... " />
-                <marker date="1530132160270" expanded="true" signature="6914:6967" ph="INSERT INTO desk... " />
-                <marker date="1530132160270" expanded="true" signature="7023:7069" ph="INSERT INTO desk... " />
-                <marker date="1530132160270" expanded="true" signature="7138:7190" ph="INSERT INTO history... " />
-                <marker date="1530132160270" expanded="true" signature="7244:7300" ph="INSERT INTO history... " />
-                <marker date="1530132160270" expanded="true" signature="7356:7405" ph="INSERT INTO history... " />
-                <marker date="1530132160270" expanded="true" signature="7473:7526" ph="INSERT INTO microphone... " />
-                <marker date="1530132160270" expanded="true" signature="7572:7633" ph="INSERT INTO microphone... " />
-                <marker date="1530132160270" expanded="true" signature="7689:7754" ph="INSERT INTO microphone... " />
-                <marker date="1530132160270" expanded="true" signature="7810:7867" ph="INSERT INTO microphone... " />
-                <marker date="1530132160270" expanded="true" signature="7924:7985" ph="INSERT INTO microphone... " />
               </folding>
             </state>
           </provider>
@@ -260,7 +225,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -300,6 +264,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -437,20 +402,21 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32930845" sideWeight="0.50208336" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32930845" sideWeight="0.49791667" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32930845" sideWeight="0.49791667" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.215625" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0984375" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39956093" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -475,6 +441,67 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/MultiThreading.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="42">
+          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding>
+            <element signature="e#345#394#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/zWaveModule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="22" column="29" lean-forward="false" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/pageUpdate.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="1" column="81" lean-forward="false" selection-start-line="1" selection-start-column="81" selection-end-line="1" selection-end-column="81" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="4" column="40" lean-forward="false" selection-start-line="4" selection-start-column="40" selection-end-line="4" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2016">
+          <caret line="96" column="14" lean-forward="false" selection-start-line="96" selection-start-column="14" selection-end-line="96" selection-end-column="14" />
+          <folding>
+            <element signature="e#253#273#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TimeManagement.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="588">
+          <caret line="28" column="63" lean-forward="false" selection-start-line="28" selection-start-column="63" selection-end-line="28" selection-end-column="63" />
+          <folding>
+            <element signature="e#214#229#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/561cf13d/cba5a5d8-7fc7-45a9-a8dd-6bf8702c25dd/main.desk">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/static/style.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2877">
@@ -505,35 +532,6 @@
           <caret line="111" column="24" lean-forward="false" selection-start-line="111" selection-start-column="24" selection-end-line="111" selection-end-column="24" />
           <folding>
             <element signature="e#253#273#0" expanded="true" />
-            <marker date="1530132160270" expanded="true" signature="930:1003" ph="SELECT name sqlite_master" />
-            <marker date="1530132160270" expanded="true" signature="1080:1094" ph="DELETE FROM " />
-            <marker date="1530132160270" expanded="true" signature="1442:1487" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="1864:1910" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="2473:2540" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="3007:3072" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="3398:3489" ph="SELECT movin... desk" />
-            <marker date="1530132160270" expanded="true" signature="3881:3956" ph="SELECT Chrom... history" />
-            <marker date="1530132160270" expanded="true" signature="4218:4304" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="4658:4739" ph="SELECT sitti... chair" />
-            <marker date="1530132160270" expanded="true" signature="5035:5119" ph="SELECT * FRO... history" />
-            <marker date="1530132160270" expanded="true" signature="5376:5457" ph="SELECT * FRO... desk" />
-            <marker date="1530132160270" expanded="true" signature="5713:5792" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="6044:6118" ph="SELECT * FRO... chair" />
-            <marker date="1530132160270" expanded="true" signature="6393:6439" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6485:6535" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6591:6641" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6695:6749" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6819:6868" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="6914:6967" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7023:7069" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7138:7190" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7244:7300" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7356:7405" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7473:7526" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7572:7633" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7689:7754" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7810:7867" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7924:7985" ph="INSERT INTO microphone... " />
           </folding>
         </state>
       </provider>
@@ -615,35 +613,6 @@
           <caret line="96" column="41" lean-forward="false" selection-start-line="96" selection-start-column="41" selection-end-line="96" selection-end-column="41" />
           <folding>
             <element signature="e#253#273#0" expanded="true" />
-            <marker date="1530132160270" expanded="true" signature="930:1003" ph="SELECT name sqlite_master" />
-            <marker date="1530132160270" expanded="true" signature="1080:1094" ph="DELETE FROM " />
-            <marker date="1530132160270" expanded="true" signature="1442:1487" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="1864:1910" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="2473:2540" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="3007:3072" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="3398:3489" ph="SELECT movin... desk" />
-            <marker date="1530132160270" expanded="true" signature="3881:3956" ph="SELECT Chrom... history" />
-            <marker date="1530132160270" expanded="true" signature="4218:4304" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="4658:4739" ph="SELECT sitti... chair" />
-            <marker date="1530132160270" expanded="true" signature="5035:5119" ph="SELECT * FRO... history" />
-            <marker date="1530132160270" expanded="true" signature="5376:5457" ph="SELECT * FRO... desk" />
-            <marker date="1530132160270" expanded="true" signature="5713:5792" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="6044:6118" ph="SELECT * FRO... chair" />
-            <marker date="1530132160270" expanded="true" signature="6393:6439" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6485:6535" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6591:6641" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6695:6749" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6819:6868" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="6914:6967" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7023:7069" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7138:7190" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7244:7300" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7356:7405" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7473:7526" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7572:7633" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7689:7754" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7810:7867" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7924:7985" ph="INSERT INTO microphone... " />
           </folding>
         </state>
       </provider>
@@ -705,35 +674,6 @@
           <caret line="96" column="41" lean-forward="false" selection-start-line="96" selection-start-column="41" selection-end-line="96" selection-end-column="41" />
           <folding>
             <element signature="e#253#273#0" expanded="true" />
-            <marker date="1530132160270" expanded="true" signature="930:1003" ph="SELECT name sqlite_master" />
-            <marker date="1530132160270" expanded="true" signature="1080:1094" ph="DELETE FROM " />
-            <marker date="1530132160270" expanded="true" signature="1442:1487" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="1864:1910" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="2473:2540" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="3007:3072" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="3398:3489" ph="SELECT movin... desk" />
-            <marker date="1530132160270" expanded="true" signature="3881:3956" ph="SELECT Chrom... history" />
-            <marker date="1530132160270" expanded="true" signature="4218:4304" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="4658:4739" ph="SELECT sitti... chair" />
-            <marker date="1530132160270" expanded="true" signature="5035:5119" ph="SELECT * FRO... history" />
-            <marker date="1530132160270" expanded="true" signature="5376:5457" ph="SELECT * FRO... desk" />
-            <marker date="1530132160270" expanded="true" signature="5713:5792" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="6044:6118" ph="SELECT * FRO... chair" />
-            <marker date="1530132160270" expanded="true" signature="6393:6439" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6485:6535" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6591:6641" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6695:6749" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6819:6868" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="6914:6967" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7023:7069" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7138:7190" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7244:7300" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7356:7405" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7473:7526" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7572:7633" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7689:7754" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7810:7867" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7924:7985" ph="INSERT INTO microphone... " />
           </folding>
         </state>
       </provider>
@@ -802,35 +742,6 @@
           <caret line="96" column="41" lean-forward="true" selection-start-line="96" selection-start-column="41" selection-end-line="96" selection-end-column="41" />
           <folding>
             <element signature="e#253#273#0" expanded="true" />
-            <marker date="1530132160270" expanded="true" signature="930:1003" ph="SELECT name sqlite_master" />
-            <marker date="1530132160270" expanded="true" signature="1080:1094" ph="DELETE FROM " />
-            <marker date="1530132160270" expanded="true" signature="1442:1487" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="1864:1910" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="2473:2540" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="3007:3072" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="3398:3489" ph="SELECT movin... desk" />
-            <marker date="1530132160270" expanded="true" signature="3881:3956" ph="SELECT Chrom... history" />
-            <marker date="1530132160270" expanded="true" signature="4218:4304" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="4658:4739" ph="SELECT sitti... chair" />
-            <marker date="1530132160270" expanded="true" signature="5035:5119" ph="SELECT * FRO... history" />
-            <marker date="1530132160270" expanded="true" signature="5376:5457" ph="SELECT * FRO... desk" />
-            <marker date="1530132160270" expanded="true" signature="5713:5792" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="6044:6118" ph="SELECT * FRO... chair" />
-            <marker date="1530132160270" expanded="true" signature="6393:6439" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6485:6535" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6591:6641" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6695:6749" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6819:6868" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="6914:6967" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7023:7069" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7138:7190" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7244:7300" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7356:7405" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7473:7526" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7572:7633" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7689:7754" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7810:7867" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7924:7985" ph="INSERT INTO microphone... " />
           </folding>
         </state>
       </provider>
@@ -896,7 +807,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1604">
+        <state relative-caret-position="84">
           <caret line="4" column="40" lean-forward="false" selection-start-line="4" selection-start-column="40" selection-end-line="4" selection-end-column="40" />
           <folding />
         </state>
@@ -919,39 +830,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3339">
+        <state relative-caret-position="2016">
           <caret line="96" column="14" lean-forward="false" selection-start-line="96" selection-start-column="14" selection-end-line="96" selection-end-column="14" />
           <folding>
             <element signature="e#253#273#0" expanded="true" />
-            <marker date="1530132160270" expanded="true" signature="930:1003" ph="SELECT name sqlite_master" />
-            <marker date="1530132160270" expanded="true" signature="1080:1094" ph="DELETE FROM " />
-            <marker date="1530132160270" expanded="true" signature="1442:1487" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="1864:1910" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="2473:2540" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="3007:3072" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="3398:3489" ph="SELECT movin... desk" />
-            <marker date="1530132160270" expanded="true" signature="3881:3956" ph="SELECT Chrom... history" />
-            <marker date="1530132160270" expanded="true" signature="4218:4304" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="4658:4739" ph="SELECT sitti... chair" />
-            <marker date="1530132160270" expanded="true" signature="5035:5119" ph="SELECT * FRO... history" />
-            <marker date="1530132160270" expanded="true" signature="5376:5457" ph="SELECT * FRO... desk" />
-            <marker date="1530132160270" expanded="true" signature="5713:5792" ph="SELECT * FRO... microphone" />
-            <marker date="1530132160270" expanded="true" signature="6044:6118" ph="SELECT * FRO... chair" />
-            <marker date="1530132160270" expanded="true" signature="6393:6439" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6485:6535" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6591:6641" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6695:6749" ph="INSERT INTO chair... " />
-            <marker date="1530132160270" expanded="true" signature="6819:6868" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="6914:6967" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7023:7069" ph="INSERT INTO desk... " />
-            <marker date="1530132160270" expanded="true" signature="7138:7190" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7244:7300" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7356:7405" ph="INSERT INTO history... " />
-            <marker date="1530132160270" expanded="true" signature="7473:7526" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7572:7633" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7689:7754" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7810:7867" ph="INSERT INTO microphone... " />
-            <marker date="1530132160270" expanded="true" signature="7924:7985" ph="INSERT INTO microphone... " />
           </folding>
         </state>
       </provider>

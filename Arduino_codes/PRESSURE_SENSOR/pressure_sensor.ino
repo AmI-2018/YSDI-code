@@ -28,18 +28,20 @@ int flag;//this variable is used as  a flag: =1 means that a variation wrt the t
 void setup() {
   
   Serial.begin(9600);
+  /*
   Serial.println("HX711 Calibration");
   Serial.println("After readings begin, place known weight on scale");
   Serial.println("Press a,s,d,f to increase calibration factor by 10,100,1000,10000 respectively");
   Serial.println("Press z,x,c,v to decrease calibration factor by 10,100,1000,10000 respectively");
   Serial.println("Press t for tare");
+  */
   scale.set_scale();
   scale.tare(); //Reset the scale to 0
  
   long zero_factor = scale.read_average(); //Get a baseline reading
-  Serial.println("Remove all weight from scale");
-  Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
-  Serial.println(zero_factor);
+  //Serial.println("Remove all weight from scale");
+  //Serial.print("Zero factor: "); //This can be used to remove the need to tare the scale. Useful in permanent scale projects.
+  //Serial.println(zero_factor);
   int i;
   for(i=0;i<N;i++)
   {
@@ -55,12 +57,12 @@ void loop() {
  
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
  
-  Serial.print("Reading: ");
-  Serial.print(scale.get_units(), 3);
-  Serial.print(" kg"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
-  Serial.print(" calibration_factor: ");
-  Serial.print(calibration_factor);
-  Serial.println();
+  //Serial.print("Reading: ");
+  //Serial.print(scale.get_units(), 3);
+  //Serial.print(" kg"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
+  //Serial.print(" calibration_factor: ");
+  //Serial.print(calibration_factor);
+  //Serial.println();
  
   reading[count]= scale.get_units();    
   if (count == (N-1))
@@ -69,7 +71,7 @@ void loop() {
       communicate_data();
       if (flag == 1)
       {
-       Serial.println("Variation");
+       //Serial.println("Variation");
        Serial.println(flag); //send a 1 to the raspberry, variation has been detected
       }
       count=-1;//resetting the counter variable
@@ -97,7 +99,7 @@ void loop() {
       calibration_factor -= 10000;  
     else if(temp == 't')
     {
-      Serial.println();
+      //Serial.println();
       scale.tare();  //Reset the scale to zero
     }
   }
@@ -108,7 +110,7 @@ void loop() {
 void communicate_data()
 {
   int i;
-  float threshold =0.025;//After many trails in the lab, It seems a reasonable value
+  float threshold =0.0125;//After many trails in the lab, It seems a reasonable value
   for(i=0;i<N-1;i++){
   if((abs(reading[i]-reading[i+1]))>threshold)
   {
